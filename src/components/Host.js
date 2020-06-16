@@ -4,6 +4,7 @@ import firebase from 'firebase';
 import QuestionCreator from "./QuestionCreator";
 import Questions from "./Questions";
 import LevenshteinDistance from "./LevenshteinDistance";
+import { Table } from "antd";
 
 var config = {
     apiKey: "AIzaSyBfCWC3nO4Dm6t_Mdi023zABHHKzrOdQkI",
@@ -15,6 +16,27 @@ var config = {
 };
 
 let firstTime = true;
+
+const columns = [
+    {
+        title: 'Question',
+        dataIndex: 'question',
+        key: 'question',
+    },
+    {
+        title: 'Answer Type',
+        dataIndex: 'type',
+        key: 'type',
+    },
+    {
+        title: 'Answers',
+        dataIndex: 'answers',
+        key: 'answers',
+        render: (text, record) => {
+            return <p>[{record.answers.join(", ")}]</p>
+        },
+    },
+];
 
 export default class Host extends React.Component {
     constructor(props) {
@@ -51,11 +73,7 @@ export default class Host extends React.Component {
             <div>
                 <div style={{border: '2px solid black'}}>
                     <h1>Below are all the question and answers</h1>
-                    {questions.map((q, i) => {
-                        return <div>
-                            {i}: {q.question} {q.type} [{q.answers && q.answers.join(', ')}]
-                        </div>
-                    })}
+                    <Table columns={columns} dataSource={questions} />
                 </div>
                 <QuestionCreator addQuestion={this.addQuestion}/>
                 <Questions questions={questions} />
