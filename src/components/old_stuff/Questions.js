@@ -67,7 +67,7 @@ export default class Questions extends React.Component {
         const { questions } = this.props;
         const { answers, score, results } = this.state;
         return (
-            <div style={{border: '2px solid black'}}>
+            <div>
                 <h1>Below is the example quiz, based on the questions created above</h1>
                 {questions.map((question, i) => {
                     return <div style={{marginBottom: 50}}>

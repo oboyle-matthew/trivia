@@ -5,6 +5,7 @@ import QuestionCreator from "./QuestionCreator";
 import Questions from "./Questions";
 import LevenshteinDistance from "./LevenshteinDistance";
 import { Table } from "antd";
+import { storage } from "firebase";
 
 var config = {
     apiKey: "AIzaSyBfCWC3nO4Dm6t_Mdi023zABHHKzrOdQkI",
@@ -43,6 +44,7 @@ export default class Host extends React.Component {
         super(props);
         this.state = {
             questions: [],
+            image: null,
         };
     }
 
@@ -67,17 +69,47 @@ export default class Host extends React.Component {
         this.questionsRef.set(questions);
     };
 
+    handleImageAsFile = (e) => {
+        const image = e.target.files[0];
+        console.log(image);
+        console.log(image.name);
+        this.setState({
+            image: image,
+        });
+    };
+
+    handleFireBaseUpload = (e) => {
+        const { image } = this.state;
+        e.preventDefault();
+        firebase.storage().ref(`/images/${image.name}`).put(image)
+    };
+
+    imageUpload = () => {
+        return (
+            <div>
+                <form onSubmit={this.handleFireBaseUpload}>
+                    <input
+                        type="file"
+                        onChange={this.handleImageAsFile}
+                    />
+                    <button>upload to firebase</button>
+                </form>
+            </div>
+        )
+    };
+
     render() {
         const { questions } = this.state;
         return (
             <div>
-                <div style={{border: '2px solid black'}}>
+                <div>
                     <h1>Below are all the question and answers</h1>
                     <Table columns={columns} dataSource={questions} />
                 </div>
                 <QuestionCreator addQuestion={this.addQuestion}/>
                 <Questions questions={questions} />
                 <LevenshteinDistance/>
+                {this.imageUpload()}
             </div>
         );
     }

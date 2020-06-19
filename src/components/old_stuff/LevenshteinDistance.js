@@ -77,7 +77,7 @@ export default class Questions extends React.Component {
     render() {
         const { s1, s2, score, similar } = this.state;
         return (
-            <div style={{border: '2px solid black'}}>
+            <div>
                 <h1>This is a test view of the (Levenshtein Distance / length of first string) to test similarity of strings. Threshold set at 0.4 currently.</h1>
                 s1: <Input value={s1} id={0} onChange={this.updates1} />
                 s2: <Input value={s2} id={1} onChange={this.updates2} />
