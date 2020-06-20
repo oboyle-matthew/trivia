@@ -23,67 +23,38 @@ export default class HomePage extends React.Component {
     render() {
         return (
             <HashRouter basename={'/'}>
-                <div>
-                    <ul>
-                        <li><Link to={"/"}>Home</Link></li>
-                        <li><Link to={"/about"}>About</Link></li>
-                    </ul>
-                    <hr/>
-                    <Route exact path={'/'} >Homeeeee</Route>
-                    <Route exact path={'/about'} >Abouttttt</Route>
-                </div>
+                <Route exact path={'/'}>
+                    <ParticipantHomePage/>
+                </Route>
+                <Route exact path={'/participant'}>
+                    <ParticipantHomePage/>
+                </Route>
+                <Route exact path={'/host'}>
+                    <HostHomePage firebase />
+                </Route>
+                <Route exact path={'/host/:name'}>
+                    <QuizCreator/>
+                </Route>
+                <Route exact path={'/participant/:name'}>
+                    <QuizTaker/>
+                </Route>
+                <Route exact path={'/participant/:name/:round'}>
+                    <RoundTaker/>
+                </Route>
+                <Route exact path={'/participant/:name/:round/results'}>
+                    <ParticipantRoundResults/>
+                </Route>
+                <Route exact path={'/host/:name/:round/results'}>
+                    <HostRoundResults/>
+                </Route>
+                <Route exact path={'/participant/:name/:round/results/:teamName'}>
+                    {/*<RoundTeamResults/>*/}
+                </Route>
+                <Route exact path={'/register/:name'}>
+                    <Register/>
+                </Route>
+
             </HashRouter>
-        )
+        );
     }
-
-    // render() {
-    //     return (
-    //         <Router>
-    //             <Route exact path={process.env.PUBLIC_URL + '/#/participant'}>
-    //                 <ParticipantHomePage/>
-    //             </Route>
-    //             <Route exact path={process.env.PUBLIC_URL + '/'}>
-    //                 <ParticipantHomePage/>
-    //             </Route>
-    //             <Route exact path={process.env.PUBLIC_URL + '/#/host'}>
-    //                 <HostHomePage firebase />
-    //             </Route>
-    //             <Route exact path={process.env.PUBLIC_URL + '/#/host/:name'}>
-    //                 <QuizCreator/>
-    //             </Route>
-    //             <Route exact path={process.env.PUBLIC_URL + '/#/participant/:name'}>
-    //                 <QuizTaker/>
-    //             </Route>
-    //             <Route exact path={process.env.PUBLIC_URL + '/#/participant/:name/:round'}>
-    //                 <RoundTaker/>
-    //             </Route>
-    //             <Route exact path={process.env.PUBLIC_URL + '/#/participant/:name/:round/results'}>
-    //                 <ParticipantRoundResults/>
-    //             </Route>
-    //             <Route exact path={process.env.PUBLIC_URL + '/#/host/:name/:round/results'}>
-    //                 <HostRoundResults/>
-    //             </Route>
-    //             <Route exact path={process.env.PUBLIC_URL + '/#/participant/:name/:round/results/:teamName'}>
-    //                 {/*<RoundTeamResults/>*/}
-    //             </Route>
-    //             <Route exact path={process.env.PUBLIC_URL + '/#/register/:name'}>
-    //                 <Register/>
-    //             </Route>
-
-    //         </Router>
-    //     );
-    // }
-}
-
-
-function Child() {
-    // We can use the `useParams` hook here to access
-    // the dynamic pieces of the URL.
-    let { name } = useParams();
-
-    return (
-        <div>
-            <h3>Quiz name: {name}</h3>
-        </div>
-    );
 }
