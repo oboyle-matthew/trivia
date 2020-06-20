@@ -82,7 +82,7 @@ export default class NumberAnswer extends React.Component {
     renderAnswerInput = () => {
         const { numberAnswer, margin, answerType, minInput, maxInput } = this.state;
         return (
-            answerType === 'plusMinus' ? <div>
+            answerType === 'plusMinus' ? <div style={{display: 'flex', flexDirection: 'row'}}>
                 Answer: <Input style={{width: 200}} value={numberAnswer} onChange={this.changeAnswer} />
                 +- <Input style={{width: 200}} value={margin} onChange={this.changeMargin} />
             </div> : <div>
