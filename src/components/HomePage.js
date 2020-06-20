@@ -29,8 +29,8 @@ export default class HomePage extends React.Component {
                         <li><Link to={"/about"}>About</Link></li>
                     </ul>
                     <hr/>
-                    <Route exact path={'/'} component={<div>Homeeeeeee</div>}/>
-                    <Route exact path={'/about'} component={<div>Abouttttt</div>}/>
+                    <Route exact path={'/'} >Homeeeee</Route>
+                    <Route exact path={'/about'} >Abouttttt</Route>
                 </div>
             </HashRouter>
         )
