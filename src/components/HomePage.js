@@ -22,34 +22,34 @@ export default class HomePage extends React.Component {
     render() {
         return (
             <Router>
-                <Route exact path={process.env.PUBLIC_URL + '/participant'}>
+                <Route exact path={process.env.PUBLIC_URL + '/#/participant'}>
                     <ParticipantHomePage/>
                 </Route>
-                <Route exact path={process.env.PUBLIC_URL + '/'}>
+                <Route exact path={process.env.PUBLIC_URL + '/#/'}>
                     <ParticipantHomePage/>
                 </Route>
-                <Route exact path={process.env.PUBLIC_URL + '/host'}>
+                <Route exact path={process.env.PUBLIC_URL + '/#/host'}>
                     <HostHomePage firebase />
                 </Route>
-                <Route exact path={process.env.PUBLIC_URL + '/host/:name'}>
+                <Route exact path={process.env.PUBLIC_URL + '/#/host/:name'}>
                     <QuizCreator/>
                 </Route>
-                <Route exact path={process.env.PUBLIC_URL + '/participant/:name'}>
+                <Route exact path={process.env.PUBLIC_URL + '/#/participant/:name'}>
                     <QuizTaker/>
                 </Route>
-                <Route exact path={process.env.PUBLIC_URL + '/participant/:name/:round'}>
+                <Route exact path={process.env.PUBLIC_URL + '/#/participant/:name/:round'}>
                     <RoundTaker/>
                 </Route>
-                <Route exact path={process.env.PUBLIC_URL + '/participant/:name/:round/results'}>
+                <Route exact path={process.env.PUBLIC_URL + '/#/participant/:name/:round/results'}>
                     <ParticipantRoundResults/>
                 </Route>
-                <Route exact path={process.env.PUBLIC_URL + '/host/:name/:round/results'}>
+                <Route exact path={process.env.PUBLIC_URL + '/#/host/:name/:round/results'}>
                     <HostRoundResults/>
                 </Route>
-                <Route exact path={process.env.PUBLIC_URL + '/participant/:name/:round/results/:teamName'}>
+                <Route exact path={process.env.PUBLIC_URL + '/#/participant/:name/:round/results/:teamName'}>
                     {/*<RoundTeamResults/>*/}
                 </Route>
-                <Route exact path={process.env.PUBLIC_URL + '/register/:name'}>
+                <Route exact path={process.env.PUBLIC_URL + '/#/register/:name'}>
                     <Register/>
                 </Route>
 
