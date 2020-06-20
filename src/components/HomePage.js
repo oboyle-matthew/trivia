@@ -5,7 +5,8 @@ import {
     Switch,
     Route,
     Link,
-    useParams
+    useParams,
+    HashRouter,
 } from "react-router-dom";
 import HostHomePage from "./host/HostHomePage";
 import QuizCreator from "./host/QuizCreator";
@@ -21,41 +22,57 @@ export default class HomePage extends React.Component {
 
     render() {
         return (
-            <Router>
-                <Route exact path={process.env.PUBLIC_URL + '/#/participant'}>
-                    <ParticipantHomePage/>
-                </Route>
-                <Route exact path={process.env.PUBLIC_URL + '/'}>
-                    <ParticipantHomePage/>
-                </Route>
-                <Route exact path={process.env.PUBLIC_URL + '/#/host'}>
-                    <HostHomePage firebase />
-                </Route>
-                <Route exact path={process.env.PUBLIC_URL + '/#/host/:name'}>
-                    <QuizCreator/>
-                </Route>
-                <Route exact path={process.env.PUBLIC_URL + '/#/participant/:name'}>
-                    <QuizTaker/>
-                </Route>
-                <Route exact path={process.env.PUBLIC_URL + '/#/participant/:name/:round'}>
-                    <RoundTaker/>
-                </Route>
-                <Route exact path={process.env.PUBLIC_URL + '/#/participant/:name/:round/results'}>
-                    <ParticipantRoundResults/>
-                </Route>
-                <Route exact path={process.env.PUBLIC_URL + '/#/host/:name/:round/results'}>
-                    <HostRoundResults/>
-                </Route>
-                <Route exact path={process.env.PUBLIC_URL + '/#/participant/:name/:round/results/:teamName'}>
-                    {/*<RoundTeamResults/>*/}
-                </Route>
-                <Route exact path={process.env.PUBLIC_URL + '/#/register/:name'}>
-                    <Register/>
-                </Route>
-
-            </Router>
-        );
+            <HashRouter basename={'/'}>
+                <div>
+                    <ul>
+                        <li><Link to={"/"}>Home</Link></li>
+                        <li><Link to={"/about"}>About</Link></li>
+                    </ul>
+                    <hr/>
+                    <Route exact path={'/'} component={<div>Homeeeeeee</div>}/>
+                    <Route exact path={'/about'} component={<div>Abouttttt</div>}/>
+                </div>
+            </HashRouter>
+        )
     }
+
+    // render() {
+    //     return (
+    //         <Router>
+    //             <Route exact path={process.env.PUBLIC_URL + '/#/participant'}>
+    //                 <ParticipantHomePage/>
+    //             </Route>
+    //             <Route exact path={process.env.PUBLIC_URL + '/'}>
+    //                 <ParticipantHomePage/>
+    //             </Route>
+    //             <Route exact path={process.env.PUBLIC_URL + '/#/host'}>
+    //                 <HostHomePage firebase />
+    //             </Route>
+    //             <Route exact path={process.env.PUBLIC_URL + '/#/host/:name'}>
+    //                 <QuizCreator/>
+    //             </Route>
+    //             <Route exact path={process.env.PUBLIC_URL + '/#/participant/:name'}>
+    //                 <QuizTaker/>
+    //             </Route>
+    //             <Route exact path={process.env.PUBLIC_URL + '/#/participant/:name/:round'}>
+    //                 <RoundTaker/>
+    //             </Route>
+    //             <Route exact path={process.env.PUBLIC_URL + '/#/participant/:name/:round/results'}>
+    //                 <ParticipantRoundResults/>
+    //             </Route>
+    //             <Route exact path={process.env.PUBLIC_URL + '/#/host/:name/:round/results'}>
+    //                 <HostRoundResults/>
+    //             </Route>
+    //             <Route exact path={process.env.PUBLIC_URL + '/#/participant/:name/:round/results/:teamName'}>
+    //                 {/*<RoundTeamResults/>*/}
+    //             </Route>
+    //             <Route exact path={process.env.PUBLIC_URL + '/#/register/:name'}>
+    //                 <Register/>
+    //             </Route>
+
+    //         </Router>
+    //     );
+    // }
 }
 
 
