@@ -44,7 +44,7 @@ export default class TextAnswer extends React.Component {
     getInfoForPosting = () => {
         const { answerType, possibleAnswers, newAnswer } = this.state;
         if (newAnswer.length > 0 && possibleAnswers.indexOf(newAnswer) === -1) {
-            possibleAnswers.push(newAnswer);
+            possibleAnswers.push(newAnswer.toLowerCase());
             this.setState({
                 possibleAnswers: possibleAnswers,
                 newAnswer: '',
@@ -62,7 +62,7 @@ export default class TextAnswer extends React.Component {
                     <Select value={answerType} style={{width: 200, height: 40}} onChange={this.changeAnswerType}>
                         <Option value="exactly">Is Exactly...</Option>
                         <Option value="contains">Contains...</Option>
-                        <Option value="regex">Matches regex...</Option>
+                        {/*<Option value="regex">Matches regex...</Option>*/}
                     </Select>
                     <br/>
                 </div>

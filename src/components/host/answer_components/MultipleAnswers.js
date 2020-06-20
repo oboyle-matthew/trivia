@@ -4,7 +4,7 @@ import TextAnswer from "./TextAnswer";
 
 const { Option } = Select;
 
-export default class SpeedRound extends React.Component {
+export default class MultipleAnswers extends React.Component {
     constructor(props) {
         super(props);
         this.state = {

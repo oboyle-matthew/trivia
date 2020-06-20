@@ -19,7 +19,9 @@ export default class SpeedRound extends React.Component {
     getInfoForPosting = () => {
         const { clues, scoreType, cluesRevealedScore, positionScores } = this.state;
         const infoForPosting = this.textAnswerRef.current.getInfoForPosting();
-        infoForPosting.clues = clues;
+        infoForPosting.clues = clues.map(clue => {
+            return {clue: clue}
+        });
         infoForPosting.scoreType = scoreType;
         infoForPosting.positionScoring = scoreType === 'clues_revealed' ? cluesRevealedScore : positionScores;
         return infoForPosting;

@@ -1,8 +1,6 @@
 export function submitQuestion(data, round, roundRef) {
     validateInput(data);
     const questions = round.questions;
-    console.log(questions);
-    console.log(roundRef);
     if (questions) {
         round.questions = [...round.questions, data]
     } else {

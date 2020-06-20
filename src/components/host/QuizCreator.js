@@ -42,13 +42,29 @@ class QuizCreator extends React.Component {
         this.quizRef.set(quiz);
     };
 
+    renderTeams = () => {
+        const { quiz } = this.state;
+        const teams = quiz.teams;
+        return teams && (
+            <div>
+                <h3>Teams registered:</h3>
+                {Object.keys(teams).map(teamName => {
+                    return <div>
+                        {teamName}
+                    </div>
+                })}
+            </div>
+        )
+    };
+
     render() {
         const { quiz } = this.state;
         const rounds = quiz.rounds;
         return (
             <div>
                 <h1>Quiz name here: {quiz && quiz.name}</h1>
-                <Collapse defaultActiveKey={'0'}>
+                {this.renderTeams()}
+                <Collapse>
                     {rounds && Object.keys(rounds).map((roundName, i) => {
                         const round = rounds[roundName];
                         return <Panel header={roundName} key={i}>

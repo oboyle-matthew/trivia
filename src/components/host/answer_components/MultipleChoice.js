@@ -3,7 +3,7 @@ import { Input, Select, List, Radio} from 'antd';
 
 const { Option } = Select;
 
-export default class ClosestNumber extends React.Component {
+export default class MultipleChoice extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
