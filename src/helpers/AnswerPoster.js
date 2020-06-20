@@ -30,14 +30,17 @@ function addScoreToDatabase(question, questionRef, points, teamName) {
 }
 
 function gradeQuestion(question, answer, questionRef, teamName) {
+    console.log(question);
     if (answer === '' || answer === undefined || answer === null) {
         return 0;
     } else {
+        console.log(question);
         try {
             answer = answer.toLowerCase();
         } catch(err) {
             // Numbers can't go to lower case
         }
+        console.log(question);
         const { questionType } = question;
         if (questionType === 'text') {
             return gradeTextQuestion(question, answer) ? parseFloat(question.score) : 0;
@@ -53,9 +56,18 @@ function gradeQuestion(question, answer, questionRef, teamName) {
         }
         if (questionType === 'multiple_answers') {
             let numCorrect = 0;
-            question.multipleAnswers.forEach((q,i) => {
-                numCorrect += gradeTextQuestion(q, answer[i]) ? 1 : 0
+            console.log(answer);
+            answer.forEach((a, i) => {
+                console.log(a);
+                console.log(question.multipleAnswers);
+                for (let j = 0; j < question.multipleAnswers.length; j++) {
+                    if (gradeTextQuestion(question.multipleAnswers[j],a)) {
+                        numCorrect++;
+                        break;
+                    }
+                }
             });
+            console.log(numCorrect);
             if (numCorrect > 0) {
                 return question.multipleScores[numCorrect-1];
             }
