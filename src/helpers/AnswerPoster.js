@@ -1,6 +1,7 @@
 export function submitAnswer(answers, name, round, roundRef, teamName) {
     console.log(answers);
     const { questions } = round;
+    console.log(questions);
     questions.forEach((question, i) => {
         if (answers[i]) {
             console.log(answers[i]);
@@ -32,7 +33,11 @@ function gradeQuestion(question, answer, questionRef, teamName) {
     if (answer === '' || answer === undefined || answer === null) {
         return 0;
     } else {
-        answer = answer.toLowerCase();
+        try {
+            answer = answer.toLowerCase();
+        } catch(err) {
+            // Numbers can't go to lower case
+        }
         const { questionType } = question;
         if (questionType === 'text') {
             return gradeTextQuestion(question, answer) ? parseFloat(question.score) : 0;
@@ -67,7 +72,12 @@ function gradeQuestion(question, answer, questionRef, teamName) {
 function gradeTextQuestion(question, answer) {
     const { answerType, possibleAnswers } = question;
     for (let i = 0; i < possibleAnswers.length; i++) {
-        const possibleAnswer = possibleAnswers[i].toLowerCase();
+        let possibleAnswer = possibleAnswers[i];
+        try {
+            possibleAnswer = possibleAnswers[i].toLowerCase();
+        } catch(err) {
+            // Numbers can't go to lower case
+        }
         if (answerType === 'exactly' && possibleAnswer === answer) {
             return true;
         }
