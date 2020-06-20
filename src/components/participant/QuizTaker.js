@@ -37,7 +37,7 @@ class QuizTaker extends React.Component {
                         const round = rounds[roundName];
                         return <div style={{display: 'flex', flexDirection: 'row'}}>
                             <p>{roundName}</p>
-                            {round.show && <Link to={process.env.PUBLIC_URL + '/#/participant/' + quiz.name + '/' + round.name}>View</Link>}
+                            {round.show && <Link to={'/#/participant/' + quiz.name + '/' + round.name}>View</Link>}
                         </div>
                     })}
                 </Collapse>

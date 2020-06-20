@@ -27,7 +27,7 @@ export default class ParticipantHomePage extends React.Component {
         return <div style={{display: 'flex', flexDirection: 'row'}}>
             <p>{quiz.name}</p>
             <p>{quiz.date}</p>
-            <Link to={process.env.PUBLIC_URL + '/#/participant/' + quiz.name}>View</Link>
+            <Link to={'/#/participant/' + quiz.name}>View</Link>
         </div>
     };
 
