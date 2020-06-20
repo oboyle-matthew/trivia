@@ -25,7 +25,7 @@ export default class HomePage extends React.Component {
                 <Route exact path={process.env.PUBLIC_URL + '/#/participant'}>
                     <ParticipantHomePage/>
                 </Route>
-                <Route exact path={process.env.PUBLIC_URL + '/#/'}>
+                <Route exact path={process.env.PUBLIC_URL + '/'}>
                     <ParticipantHomePage/>
                 </Route>
                 <Route exact path={process.env.PUBLIC_URL + '/#/host'}>
