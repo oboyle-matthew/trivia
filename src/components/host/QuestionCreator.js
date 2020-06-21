@@ -3,7 +3,7 @@ import app from 'firebase/app';
 import firebase from 'firebase';
 import Questions from "../old_stuff/Questions";
 import LevenshteinDistance from "../old_stuff/LevenshteinDistance";
-import { Table, Modal } from "antd";
+import {Table, Modal, Alert} from "antd";
 import { storage } from "firebase";
 import Question from "./question_components/Question";
 import QuestionType from "./question_components/QuestionType";
@@ -72,9 +72,11 @@ export default class QuestionCreator extends React.Component {
     };
 
     render() {
+        const { error } = this.props;
         const { questionType } = this.state;
         return (
             <div>
+                {error && <Alert message={error} type="error" />}
                 <Question ref={this.questionRef}/>
                 <QuestionType ref={this.questionTypeRef} questionType={questionType} update={this.updateQuestionType}/>
                 {this.displayPossibleAnswers()}

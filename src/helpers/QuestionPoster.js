@@ -8,13 +8,6 @@ export function submitQuestion(data, round, roundRef) {
     }
     console.log(round);
     roundRef.set(round);
-    // const questions = quiz.questions;
-    // if (questions) {
-    //     quiz.questions = [...quiz.questions, data];
-    // } else {
-    //     quiz.questions = [data];
-    // }
-    // quizRef.set(quiz);
 }
 
 function validateInput(data) {

@@ -1,6 +1,6 @@
 import React from 'react';
 import firebase from 'firebase';
-import { Collapse } from 'antd';
+import { Collapse, Popconfirm } from 'antd';
 import {
     Link,
     useParams,
@@ -57,6 +57,30 @@ class QuizCreator extends React.Component {
         )
     };
 
+    renderPanel = (roundName) => {
+        return roundName
+    };
+
+    deleteRound = (e, roundName) => {
+        const { quiz } = this.state;
+        e.stopPropagation();
+        delete quiz.rounds[roundName];
+        this.quizRef.set(quiz);
+    };
+
+    deletePanel = (roundName) => {
+        return <Popconfirm
+            placement="topRight"
+            title="Are you sure delete this round? This will remove all questions in it permanently"
+            onConfirm={(e) => this.deleteRound(e, roundName)}
+            onCancel={(e) => e.stopPropagation()}
+            okText="Yes"
+            cancelText="No"
+        >
+            <button onClick={e => e.stopPropagation()}>Delete</button>
+        </Popconfirm>
+    };
+
     render() {
         const { quiz } = this.state;
         const rounds = quiz.rounds;
@@ -70,7 +94,7 @@ class QuizCreator extends React.Component {
                 <Collapse>
                     {rounds && Object.keys(rounds).map((roundName, i) => {
                         const round = rounds[roundName];
-                        return <Panel header={roundName} key={i}>
+                        return <Panel header={this.renderPanel(roundName)} key={i} extra={this.deletePanel(roundName)}>
                             <RoundCreator round={round} roundRef={this.quizRef.child('rounds').child(roundName)} />
                         </Panel>
                     })}

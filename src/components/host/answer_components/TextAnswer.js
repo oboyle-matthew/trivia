@@ -25,10 +25,10 @@ export default class TextAnswer extends React.Component {
         })
     };
 
-    addPossibleAnswer = (e) => {
-        const { possibleAnswers } = this.state;
+    addPossibleAnswer = () => {
+        const { possibleAnswers, newAnswer } = this.state;
         this.setState({
-            possibleAnswers: [...possibleAnswers, e.target.value.toLowerCase()],
+            possibleAnswers: [...possibleAnswers, newAnswer.toLowerCase()],
             newAnswer: '',
         })
     };
@@ -78,7 +78,10 @@ export default class TextAnswer extends React.Component {
                     />}
                     <div>
                         Input an answer (Enter to add it to the list):
-                        <Input style={{width: 400}} onPressEnter={this.addPossibleAnswer} value={newAnswer} onChange={this.changeNewAnswer} placeholder="Answer" />
+                        <div style={{display: 'flex', flexDirection: 'row'}}>
+                            <Input style={{width: 400}} onPressEnter={this.addPossibleAnswer} value={newAnswer} onChange={this.changeNewAnswer} placeholder="Answer" />
+                            <button onClick={this.addPossibleAnswer}>Add possible answer</button>
+                        </div>
                     </div>
                 </div>
             </div>

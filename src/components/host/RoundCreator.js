@@ -84,6 +84,7 @@ export default class RoundCreator extends React.Component {
         super(props);
         this.state = {
             modalOpen: false,
+            questionError: null,
         };
         this.questionCreatorRef = React.createRef();
         this.columns = [
@@ -150,8 +151,8 @@ export default class RoundCreator extends React.Component {
     renderPosition = (text, record, i) => {
         const { round } = this.props;
         return <div>
-            {i > 0 && <button onClick={() => this.moveUp(i)}>Up</button>}
-            {i < round.questions.length-1 && <button onClick={() => this.moveDown(i)}>Down</button>}
+            {i > 0 && <button onClick={() => this.moveUp(i)}>Move up</button>}
+            {i < round.questions.length-1 && <button onClick={() => this.moveDown(i)}>Move down</button>}
         </div>
     };
 
@@ -244,18 +245,20 @@ export default class RoundCreator extends React.Component {
         })
     };
 
-    handleOk = (e) => {
+    handleOk = () => {
         const { round, roundRef } = this.props;
+        const infoForPosting = this.questionCreatorRef.current.getInfoForPosting();
         try {
-            const infoForPosting = this.questionCreatorRef.current.getInfoForPosting();
             submitQuestion(infoForPosting, round, roundRef);
             this.setState({
+                questionError: null,
                 modalOpen: false,
             })
         } catch(err) {
-            console.log(err);
+            this.setState({
+                questionError: err,
+            })
         }
-
     };
 
     handleCancel = () => {
@@ -312,7 +315,7 @@ export default class RoundCreator extends React.Component {
 
     render() {
         const { round } = this.props;
-        const { modalOpen } = this.state;
+        const { modalOpen, questionError } = this.state;
         return (
             <div>
                 <div>
@@ -328,7 +331,7 @@ export default class RoundCreator extends React.Component {
                         onOk={this.handleOk}
                         onCancel={this.handleCancel}
                     >
-                        <QuestionCreator ref={this.questionCreatorRef}/>
+                        <QuestionCreator error={questionError} ref={this.questionCreatorRef}/>
                     </Modal>
                 </div>
             </div>
