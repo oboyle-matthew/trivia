@@ -157,12 +157,13 @@ class RoundTaker extends React.Component {
     selectTeam = () => {
         const { selectedTeam, teams } = this.state;
         return <Select value={selectedTeam} style={{width: 200, height: 40}} onChange={this.changeSelectedTeam}>
-            {Object.keys(teams).map(teamName => <Option value={teamName}>{teamName}</Option>)}
+            {teams && Object.keys(teams).map(teamName => <Option value={teamName}>{teamName}</Option>)}
         </Select>
     };
 
     render() {
         const { round } = this.state;
+        console.log(round);
         this.userInputRefs = [];
         return (
             <div>

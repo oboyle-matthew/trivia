@@ -115,8 +115,24 @@ export default class RoundCreator extends React.Component {
                 key: 'scoring',
                 render: renderScores,
             },
+            {
+                title: 'Delete',
+                dataIndex: 'delete',
+                key: 'delete',
+                render: this.renderDeleteRow,
+            }
         ];
     }
+
+    deleteQuestion = (i) => {
+        const { round, roundRef } = this.props;
+        round.questions.splice(i,1);
+        roundRef.set(round);
+    };
+
+    renderDeleteRow = (text,record,i) => {
+        return <button onClick={() => this.deleteQuestion(i)}>X</button>
+    };
 
     beginSpeedRound = (record, i) => {
         const { roundRef } = this.props;
@@ -198,8 +214,7 @@ export default class RoundCreator extends React.Component {
     };
 
     handleOk = (e) => {
-        const { round } = this.props;
-        const { roundRef } = this.props;
+        const { round, roundRef } = this.props;
         try {
             const infoForPosting = this.questionCreatorRef.current.getInfoForPosting();
             submitQuestion(infoForPosting, round, roundRef);
