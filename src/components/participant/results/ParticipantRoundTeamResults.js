@@ -7,6 +7,7 @@ import {
     withRouter,
 } from "react-router-dom";
 import Scoreboard from "../../results/Scoreboard";
+import ImageDisplay from "../../media_display/ImageDisplay";
 
 const renderAnswers = (record) => {
     const { questionType } = record;
@@ -78,6 +79,7 @@ class ParticipantRoundTeamResults extends React.Component {
     displayQuestion = (question, i) => {
         return <div style={{border: '2px solid black'}}>
             <h4>Q{i+1}: {question.question} (type={question.questionType})</h4>
+            {question.imageId && <ImageDisplay width={300} height={200} imageId={question.imageId}/>}
             {this.renderTeamAnswer(question)}
         </div>
     };

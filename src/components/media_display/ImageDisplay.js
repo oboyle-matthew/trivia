@@ -1,7 +1,8 @@
 import React from 'react';
 import 'antd/dist/antd.css'
 import firebase from 'firebase';
-
+import { Resizable, ResizableBox } from 'react-resizable';
+import 'react-resizable/css/styles.css';
 
 export default class ImageDisplay extends React.Component {
     constructor(props) {
@@ -25,11 +26,19 @@ export default class ImageDisplay extends React.Component {
 
     render() {
         const { imageSrc } = this.state;
+        const { width, height } = this.props;
         return (
-            imageSrc && <img
-                style={this.props.style}
-                src={imageSrc}
-            />
-        );
+            <ResizableBox width={width} height={height} maxConstraints={[1500, 700]}>
+                <img
+                    style={{width: '100%', height: '100%'}}
+                    src={imageSrc}
+                />
+            </ResizableBox>
+        )
+        // return (
+        //     imageSrc && <ResizableBox style={this.props.style}>
+        //
+        //     </ResizableBox>
+        // );
     }
 }

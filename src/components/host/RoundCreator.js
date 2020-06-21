@@ -81,7 +81,7 @@ const renderScores = (text, record) => {
 };
 
 const renderMedia = (text, record) => {
-    return <ImageDisplay style={{width: 100, height: 100}} imageId={record.imageId}/>
+    return <ImageDisplay width={100} height={100} imageId={record.imageId}/>
 }
 
 export default class RoundCreator extends React.Component {

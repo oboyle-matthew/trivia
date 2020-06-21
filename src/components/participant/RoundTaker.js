@@ -115,7 +115,7 @@ class RoundTaker extends React.Component {
         return <div style={{border: '2px solid black'}}>
             <div style={{display: 'flex', flexDirection: 'row'}}>
                 <h4>Q{i+1}: {question.question} (type={question.questionType})</h4>
-                {question.imageId && <ImageDisplay style={{width: 300, height: 300}} imageId={question.imageId}/>}
+                {question.imageId && <ImageDisplay width={300} height={200} imageId={question.imageId}/>}
                 {customScoringEnabled && this.selectCustomScore(i)}
             </div>
             {this.userInput(question, i)}
