@@ -28,7 +28,7 @@ export default class ImageDisplay extends React.Component {
         const { imageSrc } = this.state;
         const { width, height } = this.props;
         return (
-            <ResizableBox width={width} height={height} maxConstraints={[1500, 700]}>
+            imageSrc && <ResizableBox width={width} height={height} maxConstraints={[1500, 700]}>
                 <img
                     style={{width: '100%', height: '100%'}}
                     src={imageSrc}
