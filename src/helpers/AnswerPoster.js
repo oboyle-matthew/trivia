@@ -3,7 +3,25 @@ export function submitAnswer(answers, name, round, roundRef, teamName, customSco
     questions.forEach((question, i) => {
         if (answers[i]) {
             const questionRef = roundRef.child('questions').child(i);
-            const score = (round.customScoringEnabled && customScores[i]) ? parseFloat(customScores[i]) : parseFloat(question.score);
+            let score = parseFloat(question.score);
+
+            // Update for custom, user-assigned scoring
+            if (round.customScoringEnabled && customScores[i]) {
+                score = parseFloat(customScores[i]);
+                if (question.questionType === 'multiple_answers') {
+                    question.customScores = [];
+                    for (let j = 0; j < question.multipleScores.length; j++) {
+                        if (j === question.multipleScores.length-1) {
+                            question.customScores.push(score);
+                        } else {
+                            question.customScores.push(0);
+                        }
+                    }
+                }
+            }
+            console.log(question.multipleScores);
+            console.log(question.customScores);
+
             const points = gradeQuestion(question, answers[i].answer, questionRef, teamName, score);
             if (question.userAnswer === undefined) {
                 question.userAnswer = {};
@@ -12,6 +30,7 @@ export function submitAnswer(answers, name, round, roundRef, teamName, customSco
             if (round.customScoringEnabled && customScores[i]) {
                 question.userAnswer[teamName] += (' (for ' + customScores[i] + "point(s))");
             }
+            delete question.customScores;
             if (question.questionType !== 'closest') {
                 addScoreToDatabase(question, questionRef, points, teamName);
             }
@@ -54,16 +73,30 @@ function gradeQuestion(question, answer, questionRef, teamName, score) {
         }
         if (questionType === 'multiple_answers') {
             let numCorrect = 0;
-            answer.forEach((a, i) => {
-                for (let j = 0; j < question.multipleAnswers.length; j++) {
-                    if (gradeTextQuestion(question.multipleAnswers[j],a)) {
+            question.multipleAnswers.forEach((a,i) => {
+                for (let j = 0; j < answer.length; j++) {
+                    if (gradeTextQuestion(a, answer[j])) {
                         numCorrect++;
                         break;
                     }
                 }
             });
+            // answer.forEach((a, i) => {
+            //     for (let j = 0; j < question.multipleAnswers.length; j++) {
+            //         if (gradeTextQuestion(question.multipleAnswers[j],a)) {
+            //             numCorrect++;
+            //             break;
+            //         }
+            //     }
+            // });
             if (numCorrect > 0) {
-                return question.multipleScores[numCorrect-1];
+                console.log(numCorrect);
+                console.log(question.customScores);
+                if (question.customScores) {
+                    return question.customScores[numCorrect-1]
+                } else {
+                    return question.multipleScores[numCorrect-1];
+                }
             }
             return 0;
         }
