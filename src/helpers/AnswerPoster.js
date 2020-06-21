@@ -76,6 +76,12 @@ function gradeQuestion(question, answer, questionRef, teamName, score) {
 function gradeTextQuestion(question, answer) {
     const { answerType, possibleAnswers } = question;
     for (let i = 0; i < possibleAnswers.length; i++) {
+        try {
+            answer = answer.toLowerCase();
+        } catch(err) {
+
+        }
+        console.log()
         let possibleAnswer = possibleAnswers[i];
         try {
             possibleAnswer = possibleAnswers[i].toLowerCase();

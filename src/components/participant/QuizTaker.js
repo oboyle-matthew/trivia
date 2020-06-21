@@ -6,6 +6,7 @@ import {
     useParams,
     withRouter,
 } from "react-router-dom";
+import {getSortedRoundNames} from "../../helpers/RoundNameSorter";
 
 class QuizTaker extends React.Component {
     constructor(props) {
@@ -33,7 +34,7 @@ class QuizTaker extends React.Component {
             <div>
                 <h1>Quiz name here: {quiz && quiz.name}</h1>
                 <Collapse defaultActiveKey={'0'}>
-                    {rounds && Object.keys(rounds).map((roundName, i) => {
+                    {rounds && getSortedRoundNames(rounds).map((roundName, i) => {
                         const round = rounds[roundName];
                         return <div style={{display: 'flex', flexDirection: 'row'}}>
                             <p>{roundName}</p>

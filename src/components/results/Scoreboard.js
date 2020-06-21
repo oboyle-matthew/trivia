@@ -6,6 +6,7 @@ import {
     useParams,
     withRouter,
 } from "react-router-dom";
+import {getSortedRoundNames} from "../../helpers/RoundNameSorter";
 
 const { Option } = Select;
 
@@ -63,8 +64,8 @@ class Scoreboard extends React.Component {
         }
         let roundNames = [];
         if (rounds) {
-            roundNames = Object.keys(rounds);
-            Object.keys(rounds).forEach(roundName => {
+            roundNames = getSortedRoundNames(rounds);
+            roundNames.forEach(roundName => {
                 const round = rounds[roundName];
                 if (round.questions) {
                     round.questions.forEach(question => {

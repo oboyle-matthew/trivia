@@ -1,12 +1,13 @@
 import React from 'react';
 import firebase from 'firebase';
-import { Collapse, Popconfirm } from 'antd';
+import {Collapse, Input, Popconfirm} from 'antd';
 import {
     Link,
     useParams,
     withRouter,
 } from "react-router-dom";
 import RoundCreator from "./RoundCreator";
+import {getSortedRoundNames} from "../../helpers/RoundNameSorter";
 
 const { Panel } = Collapse;
 
@@ -16,6 +17,8 @@ class QuizCreator extends React.Component {
         super(props);
         this.state = {
             quiz: {},
+            editRoundNames: false,
+            newRoundNames: [],
         };
     }
 
@@ -24,8 +27,16 @@ class QuizCreator extends React.Component {
         const self = this;
         this.quizRef = firebase.database().ref('quizzes').child(name);
         this.quizRef.on('value', snapshot => {
+            const quiz = snapshot.val();
+            let newRoundNames = [];
+            if (quiz.rounds) {
+                if (Object.keys(quiz.rounds).length !== newRoundNames.length) {
+                    newRoundNames = getSortedRoundNames(quiz.rounds)
+                }
+            }
             self.setState({
-                quiz: snapshot.val(),
+                quiz,
+                newRoundNames
             });
         });
     }
@@ -34,10 +45,10 @@ class QuizCreator extends React.Component {
         const { quiz } = this.state;
         const rounds = quiz.rounds;
         if (rounds) {
-            const roundName = Object.keys(rounds).length + 1;
-            quiz.rounds['Round ' + roundName] = {'name': 'Round ' + roundName};
+            const roundIndex = Object.keys(rounds).length;
+            quiz.rounds['Round ' + (roundIndex+1)] = {'name': 'Round ' + (roundIndex+1), 'position': roundIndex};
         } else {
-            quiz.rounds = {'Round 1': {'name': 'Round 1'}};
+            quiz.rounds = {'Round 1': {'name': 'Round 1', 'position': 0}};
         }
         this.quizRef.set(quiz);
     };
@@ -64,7 +75,14 @@ class QuizCreator extends React.Component {
     deleteRound = (e, roundName) => {
         const { quiz } = this.state;
         e.stopPropagation();
+        const pos = quiz.rounds[roundName].position;
         delete quiz.rounds[roundName];
+        Object.keys(quiz.rounds).forEach(roundName => {
+            const round = quiz.rounds[roundName];
+            if (pos < round.position) {
+                round.position = round.position-1;
+            }
+        });
         this.quizRef.set(quiz);
     };
 
@@ -81,8 +99,67 @@ class QuizCreator extends React.Component {
         </Popconfirm>
     };
 
-    render() {
+    updateNewRoundName = (e,i) => {
+        const { newRoundNames } = this.state;
+        newRoundNames[i] = e.target.value;
+        this.setState({
+            newRoundNames
+        })
+    };
+
+    changeRoundName = (i) => {
+        const { newRoundNames, quiz } = this.state;
+        const newRoundName = newRoundNames[i];
+        const oldRoundName = getSortedRoundNames(quiz.rounds)[i];
+        if (oldRoundName !== newRoundName) {
+            quiz.rounds[newRoundName] = quiz.rounds[oldRoundName];
+            quiz.rounds[newRoundName].name = newRoundName;
+            delete quiz.rounds[oldRoundName];
+            this.quizRef.set(quiz);
+        }
+    };
+
+    moveRoundUp = (i) => {
         const { quiz } = this.state;
+        const sortedRounds = getSortedRoundNames(quiz.rounds);
+        const roundAbove = quiz.rounds[sortedRounds[i-1]];
+        const currRound = quiz.rounds[sortedRounds[i]];
+        const posAbove = roundAbove.position;
+        const currPosition = currRound.position;
+        roundAbove.position = currPosition;
+        currRound.position = posAbove;
+        this.quizRef.set(quiz);
+    }
+
+    moveRoundDown = (i) => {
+        const { quiz } = this.state;
+        const sortedRounds = getSortedRoundNames(quiz.rounds);
+        const roundBelow = quiz.rounds[sortedRounds[i+1]];
+        const currRound = quiz.rounds[sortedRounds[i]];
+        const posBelow = roundBelow.position;
+        const currPosition = currRound.position;
+        roundBelow.position = currPosition;
+        currRound.position = posBelow;
+        this.quizRef.set(quiz);
+    }
+
+    renderEditFileNames = () => {
+        const { newRoundNames, editRoundNames } = this.state;
+        return <div>
+            <button onClick={() => this.setState({editRoundNames: !editRoundNames})}>{(editRoundNames ? "Hide " : "Show ") + " edit round names/positions"}</button>
+            {editRoundNames && newRoundNames.map((roundName, i) => {
+                return <div style={{display: 'flex', flexDirection: 'row'}}>
+                    <Input style={{width: 300}} value={roundName} onChange={e => this.updateNewRoundName(e,i)} />
+                    {i > 0 && <button onClick={() => this.moveRoundUp(i)}>Move Up</button>}
+                    {i < newRoundNames.length-1 && <button onClick={() => this.moveRoundDown(i)}>Move Down</button>}
+                    <button onClick={() => this.changeRoundName(i)}>Update</button>
+                </div>
+            })}
+        </div>
+    };
+
+    render() {
+        const { quiz, newRoundNames } = this.state;
         const rounds = quiz.rounds;
         return (
             <div>
@@ -92,7 +169,7 @@ class QuizCreator extends React.Component {
                 </Link>
                 {this.renderTeams()}
                 <Collapse>
-                    {rounds && Object.keys(rounds).map((roundName, i) => {
+                    {rounds && getSortedRoundNames(rounds).map((roundName, i) => {
                         const round = rounds[roundName];
                         return <Panel header={this.renderPanel(roundName)} key={i} extra={this.deletePanel(roundName)}>
                             <RoundCreator round={round} roundRef={this.quizRef.child('rounds').child(roundName)} />
@@ -100,6 +177,7 @@ class QuizCreator extends React.Component {
                     })}
                 </Collapse>
                 <button onClick={this.addNewRound}>Add New Round</button>
+                {this.renderEditFileNames()}
             </div>
         );
     }

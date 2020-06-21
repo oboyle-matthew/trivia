@@ -349,7 +349,6 @@ export default class RoundCreator extends React.Component {
                 placeholder="Description...."
                 autoSize={{ minRows: 1 }}
             />
-            {/*<Input value={description}  />*/}
             <button onClick={this.updateDescription}>Update description</button>
         </div>
     };
