@@ -173,6 +173,11 @@ class RoundTaker extends React.Component {
                     <button>Home screen</button>
                 </Link>
                 <br/>
+                {round.description && <div style={{border: '2px solid black'}}>
+                    <h3>Round description:</h3>
+                    {round.description.split("\n").map(line => <div>{line}</div>)}
+                </div>}
+                <br/>
                 Select your team: {this.selectTeam()}
                 {!selectedTeam && <Alert message={"You must select a team before submitting"} type="warning" />}
                 <h1>Round name here: {round && round.name}</h1>

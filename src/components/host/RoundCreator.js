@@ -9,6 +9,7 @@ import QuestionCreator from "./QuestionCreator";
 import {submitQuestion} from "../../helpers/QuestionPoster";
 import ImageDisplay from "../media_display/ImageDisplay";
 
+const { TextArea } = Input;
 
 const ordinalSuffix = (i) => {
     var j = i % 10,
@@ -90,6 +91,7 @@ export default class RoundCreator extends React.Component {
         this.state = {
             modalOpen: false,
             questionError: null,
+            description: props.round.description,
         };
         this.questionCreatorRef = React.createRef();
         this.columns = [
@@ -331,6 +333,27 @@ export default class RoundCreator extends React.Component {
         </div>
     };
 
+    updateDescription = () => {
+        const { round, roundRef } = this.props;
+        const { description } = this.state;
+        round.description = description;
+        roundRef.set(round);
+    };
+
+    renderDescription = () => {
+        const { description } = this.state;
+        return <div>
+            <TextArea
+                value={description}
+                onChange={e => this.setState({description: e.target.value})}
+                placeholder="Description...."
+                autoSize={{ minRows: 1 }}
+            />
+            {/*<Input value={description}  />*/}
+            <button onClick={this.updateDescription}>Update description</button>
+        </div>
+    };
+
     render() {
         const { round } = this.props;
         const { modalOpen, questionError } = this.state;
@@ -341,6 +364,7 @@ export default class RoundCreator extends React.Component {
                         Show round: <Switch checked={round.show} onChange={e => this.toggleShowRound(e,round)} />
                     </div>
                     {this.renderCustomScoring()}
+                    {this.renderDescription()}
                     {round.questions && <Table columns={this.columns} dataSource={round.questions} pagination={false} />}
                     <button onClick={this.addQuestion}>Add question</button>
                     <Modal
