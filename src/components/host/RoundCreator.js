@@ -7,6 +7,7 @@ import {Table, Modal, Switch, Input} from "antd";
 import { storage } from "firebase";
 import QuestionCreator from "./QuestionCreator";
 import {submitQuestion} from "../../helpers/QuestionPoster";
+import ImageDisplay from "../media_display/ImageDisplay";
 
 
 const ordinalSuffix = (i) => {
@@ -79,6 +80,10 @@ const renderScores = (text, record) => {
     return text;
 };
 
+const renderMedia = (text, record) => {
+    return <ImageDisplay style={{width: 100, height: 100}} imageId={record.imageId}/>
+}
+
 export default class RoundCreator extends React.Component {
     constructor(props) {
         super(props);
@@ -99,6 +104,12 @@ export default class RoundCreator extends React.Component {
                 dataIndex: 'question',
                 key: 'question',
                 render: this.renderQuestions,
+            },
+            {
+                title: 'Media',
+                dataIndex: 'media',
+                key: 'media',
+                render: renderMedia,
             },
             {
                 title: 'Question Type',

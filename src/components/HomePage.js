@@ -54,6 +54,7 @@ export default class HomePage extends React.Component {
                 <Route exact path={'/register/:name'}>
                     <Register/>
                 </Route>
+                {/*<img src={'https://firebasestorage.googleapis.com/v0/b/trivia-7b47d.appspot.com/o/images%2F1592760080949?alt=media&token=3b7faec9-07e1-4e41-afdf-06b8d408fbee.png'}/>*/}
 
             </HashRouter>
         );
