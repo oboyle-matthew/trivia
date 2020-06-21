@@ -16,6 +16,7 @@ import RoundTaker from "./participant/RoundTaker";
 import Register from "./register/Register";
 import HostRoundResults from "./host/results/HostRoundResults";
 import ParticipantRoundResults from "./participant/results/ParticipantRoundResults";
+import ParticipantRoundTeamResults from "./participant/results/ParticipantRoundTeamResults";
 
 
 export default class HomePage extends React.Component {
@@ -48,7 +49,7 @@ export default class HomePage extends React.Component {
                     <HostRoundResults/>
                 </Route>
                 <Route exact path={'/participant/:name/:round/results/:teamName'}>
-                    {/*<RoundTeamResults/>*/}
+                    <ParticipantRoundTeamResults/>
                 </Route>
                 <Route exact path={'/register/:name'}>
                     <Register/>
