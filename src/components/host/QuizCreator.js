@@ -63,6 +63,9 @@ class QuizCreator extends React.Component {
         return (
             <div>
                 <h1>Quiz name here: {quiz && quiz.name}</h1>
+                <Link to={'/register/' + quiz.name}>
+                    <button>Register a new team</button>
+                </Link>
                 {this.renderTeams()}
                 <Collapse>
                     {rounds && Object.keys(rounds).map((roundName, i) => {

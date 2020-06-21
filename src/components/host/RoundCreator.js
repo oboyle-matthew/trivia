@@ -8,6 +8,7 @@ import { storage } from "firebase";
 import QuestionCreator from "./QuestionCreator";
 import {submitQuestion} from "../../helpers/QuestionPoster";
 
+
 const ordinalSuffix = (i) => {
     var j = i % 10,
         k = i % 100;
@@ -87,6 +88,12 @@ export default class RoundCreator extends React.Component {
         this.questionCreatorRef = React.createRef();
         this.columns = [
             {
+                title: 'Position',
+                dataIndex: 'pos',
+                key: 'question',
+                render: this.renderPosition,
+            },
+            {
                 title: 'Question',
                 dataIndex: 'question',
                 key: 'question',
@@ -123,6 +130,30 @@ export default class RoundCreator extends React.Component {
             }
         ];
     }
+
+    moveUp = (i) => {
+        const { round, roundRef } = this.props;
+        const oldAbove = round.questions[i-1];
+        round.questions[i-1] = round.questions[i];
+        round.questions[i] = oldAbove;
+        roundRef.set(round);
+    };
+
+    moveDown = (i) => {
+        const { round, roundRef } = this.props;
+        const oldBelow = round.questions[i+1];
+        round.questions[i+1] = round.questions[i];
+        round.questions[i] = oldBelow;
+        roundRef.set(round);
+    };
+
+    renderPosition = (text, record, i) => {
+        const { round } = this.props;
+        return <div>
+            {i > 0 && <button onClick={() => this.moveUp(i)}>Up</button>}
+            {i < round.questions.length-1 && <button onClick={() => this.moveDown(i)}>Down</button>}
+        </div>
+    };
 
     deleteQuestion = (i) => {
         const { round, roundRef } = this.props;
