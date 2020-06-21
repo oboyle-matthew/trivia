@@ -23,6 +23,8 @@ class RoundTaker extends React.Component {
             userInputRefs: [],
             selectedTeam: null,
             teams: [],
+            customScores: [],
+            customScoresError: null,
         };
     }
 
@@ -35,6 +37,7 @@ class RoundTaker extends React.Component {
             self.setState({
                 round,
                 userInputRefs: round.questions.map(() => React.createRef()),
+                customScores: round.questions.map(() => undefined),
             });
         });
         this.teamRef = firebase.database().ref('quizzes').child(name).child('teams');
@@ -66,12 +69,53 @@ class RoundTaker extends React.Component {
         }
     };
 
-    displayQuestion = (question, i) => {
+    changeCustomScore = (e,i) => {
+        const { customScores, round } = this.state;
+        customScores[i] = e;
+        let customScoresError = false;
+        let numbers = [0,0,0];
+        customScores.forEach(score => {
+            if (score === '1') {
+                numbers[0]++;
+            } else if (score === '2') {
+                numbers[1]++;
+            } else if (score === '3') {
+                numbers[2]++;
+            }
+        });
+        numbers.forEach((number, i) => {
+            if (number > parseInt(round.customScores[i])) {
+                customScoresError = "Too many " + (i+1) + " points";
+            }
+        });
+        this.setState({
+            customScores,
+            customScoresError
+        })
+    };
+
+    selectCustomScore = (i) => {
+        const { customScores, customScoresError } = this.state;
+        return <div style={{display: 'flex', flexDirection: 'row'}}>
+            <Select placeholder="points..." value={customScores[i]} style={{width: 100, height: 40}} onChange={e => this.changeCustomScore(e,i)}>
+                <Option value={'0'}>0</Option>
+                <Option value={'1'}>1</Option>
+                <Option value={'2'}>2</Option>
+                <Option value={'3'}>3</Option>
+            </Select>
+            {customScoresError && <p style={{color: 'red'}}>{customScoresError}</p>}
+        </div>
+    };
+
+    displayQuestion = (question, i, customScoringEnabled) => {
         if (question.questionType === 'speed' && !question.begin) {
             return;
         }
         return <div style={{border: '2px solid black'}}>
-            <h4>Q{i+1}: {question.question} (type={question.questionType})</h4>
+            <div style={{display: 'flex', flexDirection: 'row'}}>
+                <h4>Q{i+1}: {question.question} (type={question.questionType})</h4>
+                {customScoringEnabled && this.selectCustomScore(i)}
+            </div>
             {this.userInput(question, i)}
         </div>
     };
@@ -89,7 +133,7 @@ class RoundTaker extends React.Component {
 
     submitRound = () => {
         const { name } = this.props.match.params;
-        const { round, userInputRefs, selectedTeam } = this.state;
+        const { round, userInputRefs, selectedTeam, customScores } = this.state;
         if (selectedTeam === null) {
             return;
         }
@@ -101,7 +145,7 @@ class RoundTaker extends React.Component {
                 answers.push(null);
             }
         });
-        submitAnswer(answers, name, round, this.roundRef, selectedTeam);
+        submitAnswer(answers, name, round, this.roundRef, selectedTeam, customScores);
     };
 
     changeSelectedTeam = (e) => {
@@ -124,7 +168,7 @@ class RoundTaker extends React.Component {
             <div>
                 Select your team: {this.selectTeam()}
                 <h1>Round name here: {round && round.name}</h1>
-                {round && round.questions && round.questions.map((q, i) => this.displayQuestion(q,i))}
+                {round && round.questions && round.questions.map((q, i) => this.displayQuestion(q,i,round.customScoringEnabled))}
                 <button onClick={this.submitRound}>Submit all answers for this round</button>
             </div>
         );

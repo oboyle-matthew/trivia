@@ -3,7 +3,7 @@ import app from 'firebase/app';
 import firebase from 'firebase';
 import Questions from "../old_stuff/Questions";
 import LevenshteinDistance from "../old_stuff/LevenshteinDistance";
-import {Table, Modal, Switch} from "antd";
+import {Table, Modal, Switch, Input} from "antd";
 import { storage } from "firebase";
 import QuestionCreator from "./QuestionCreator";
 import {submitQuestion} from "../../helpers/QuestionPoster";
@@ -31,9 +31,10 @@ const renderAnswers = (text, record) => {
         </div>
     }
     if (questionType === 'number' || questionType === 'closest') {
+        const num = parseFloat(record.numberAnswer);
+        const margin = parseFloat(record.margin);
         return <div>
-            {record.numberAnswer}
-            {record.margin && (' +- ' + record.margin)}
+            {record.margin ? (num - margin) + " - " + (num + margin) : num}
         </div>
     }
     if (questionType === 'multiple_answers') {
@@ -229,6 +230,40 @@ export default class RoundCreator extends React.Component {
         roundRef.set(round);
     };
 
+    setCustomScoring = (val) => {
+        const { round, roundRef } = this.props;
+        round.customScoringEnabled = val;
+        if (val && !round.customScores) {
+            round.customScores = [0,0,0];
+        }
+        roundRef.set(round);
+    };
+
+    updateCustomScore = (e, i) => {
+        const { round, roundRef } = this.props;
+        const value = e.target.value;
+        if (value === '' || (!isNaN(value) && Number.isInteger(parseInt(value)))) {
+            round.customScores[i] = value;
+            roundRef.set(round);
+        }
+    };
+
+    renderCustomScoring = () => {
+        const { round } = this.props;
+        const { customScoringEnabled, customScores } = round;
+        return <div>
+            <button onClick={() => this.setCustomScoring(!customScoringEnabled)}>{customScoringEnabled ? "Disable " : "Enable "} custom scoring</button>
+            (Overrides all basic scores)
+            {customScoringEnabled && customScores && <div>
+                {customScores.map((score, i) => {
+                    return <div style={{display: 'flex', flexDirection: 'row'}}>
+                        {i+1} points: <Input style={{width: 200}} value={score} onChange={e => this.updateCustomScore(e, i)} />
+                    </div>
+                })}
+            </div>}
+        </div>
+    };
+
     render() {
         const { round } = this.props;
         const { modalOpen } = this.state;
@@ -238,6 +273,7 @@ export default class RoundCreator extends React.Component {
                     <div>
                         Show round: <Switch checked={round.show} onChange={e => this.toggleShowRound(e,round)} />
                     </div>
+                    {this.renderCustomScoring()}
                     {round.questions && <Table columns={this.columns} dataSource={round.questions} pagination={false} />}
                     <button onClick={this.addQuestion}>Add question</button>
                     <Modal

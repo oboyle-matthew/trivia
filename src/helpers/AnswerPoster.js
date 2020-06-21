@@ -1,16 +1,17 @@
-export function submitAnswer(answers, name, round, roundRef, teamName) {
-    console.log(answers);
+export function submitAnswer(answers, name, round, roundRef, teamName, customScores) {
     const { questions } = round;
-    console.log(questions);
     questions.forEach((question, i) => {
         if (answers[i]) {
-            console.log(answers[i]);
             const questionRef = roundRef.child('questions').child(i);
-            const points = gradeQuestion(question, answers[i].answer, questionRef, teamName);
+            const score = (round.customScoringEnabled && customScores[i]) ? parseFloat(customScores[i]) : parseFloat(question.score);
+            const points = gradeQuestion(question, answers[i].answer, questionRef, teamName, score);
             if (question.userAnswer === undefined) {
                 question.userAnswer = {};
             }
             question.userAnswer[teamName] = answers[i].answer;
+            if (round.customScoringEnabled && customScores[i]) {
+                question.userAnswer[teamName] += (' (for ' + customScores[i] + "point(s))");
+            }
             if (question.questionType !== 'closest') {
                 addScoreToDatabase(question, questionRef, points, teamName);
             }
@@ -29,37 +30,31 @@ function addScoreToDatabase(question, questionRef, points, teamName) {
     questionRef.set(question);
 }
 
-function gradeQuestion(question, answer, questionRef, teamName) {
-    console.log(question);
+function gradeQuestion(question, answer, questionRef, teamName, score) {
     if (answer === '' || answer === undefined || answer === null) {
         return 0;
     } else {
-        console.log(question);
         try {
             answer = answer.toLowerCase();
         } catch(err) {
             // Numbers can't go to lower case
         }
-        console.log(question);
         const { questionType } = question;
         if (questionType === 'text') {
-            return gradeTextQuestion(question, answer) ? parseFloat(question.score) : 0;
+            return gradeTextQuestion(question, answer) ? score : 0;
         }
         if (questionType === 'number') {
-            return gradeNumberQuestion(question, answer) ? parseFloat(question.score) : 0;
+            return gradeNumberQuestion(question, answer) ? score : 0;
         }
         if (questionType === 'closest') {
             return gradeClosestQuestion(question, answer, questionRef, teamName);
         }
         if (questionType === 'multiple_choice') {
-            return gradeMultipleChoiceQuestion(question, answer) ? parseFloat(question.score) : 0;
+            return gradeMultipleChoiceQuestion(question, answer) ? score : 0;
         }
         if (questionType === 'multiple_answers') {
             let numCorrect = 0;
-            console.log(answer);
             answer.forEach((a, i) => {
-                console.log(a);
-                console.log(question.multipleAnswers);
                 for (let j = 0; j < question.multipleAnswers.length; j++) {
                     if (gradeTextQuestion(question.multipleAnswers[j],a)) {
                         numCorrect++;
@@ -67,7 +62,6 @@ function gradeQuestion(question, answer, questionRef, teamName) {
                     }
                 }
             });
-            console.log(numCorrect);
             if (numCorrect > 0) {
                 return question.multipleScores[numCorrect-1];
             }
@@ -76,8 +70,6 @@ function gradeQuestion(question, answer, questionRef, teamName) {
         if (questionType === 'speed') {
             return gradeSpeedQuestion(question, answer, questionRef, teamName);
         }
-        // console.log(question.questionType);
-
     }
 }
 
