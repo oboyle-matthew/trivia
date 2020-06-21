@@ -245,11 +245,18 @@ export default class RoundCreator extends React.Component {
         })
     };
 
+    uploadImageToFirebase = (image, imageId) => {
+        firebase.storage().ref(`/images/${imageId}`).put(image)
+    };
+
     handleOk = () => {
         const { round, roundRef } = this.props;
         const infoForPosting = this.questionCreatorRef.current.getInfoForPosting();
         try {
             submitQuestion(infoForPosting, round, roundRef);
+            if (infoForPosting.imageId) {
+                this.uploadImageToFirebase(this.questionCreatorRef.current.getImage(), infoForPosting.imageId);
+            }
             this.setState({
                 questionError: null,
                 modalOpen: false,
@@ -337,5 +344,4 @@ export default class RoundCreator extends React.Component {
             </div>
         );
     }
-
 }

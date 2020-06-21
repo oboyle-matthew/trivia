@@ -6,7 +6,6 @@ export function submitQuestion(data, round, roundRef) {
     } else {
         round.questions = [data];
     }
-    console.log(round);
     roundRef.set(round);
 }
 

@@ -82,24 +82,52 @@ class ParticipantRoundTeamResults extends React.Component {
         </div>
     };
 
-    render() {
+    renderTeamScore = () => {
         const { round } = this.state;
         const { teamName } = this.props.match.params;
+        let totalScore = 0;
+        let teamScore = 0;
+        round.questions && round.questions.forEach(question => {
+            const { questionType } = question;
+            console.log(round.customScoringEnabled && round.customScores)
+            if (round.customScoringEnabled && round.customScores) {
+                // Could do this outside loop, but this works
+                totalScore = parseFloat(round.customScores[0]) + (parseFloat(round.customScores[1])*2) + (parseFloat(round.customScores[2])*3)
+            } else {
+                if (questionType === 'text' || questionType === 'number' || questionType === 'multiple_choice') {
+                    totalScore += parseFloat(question.score);
+                } else if (questionType === 'closest' || questionType === 'speed') {
+                    totalScore += parseFloat(question.positionScoring[0])
+                } else if (questionType === 'multiple_answers') {
+                    totalScore += parseFloat(question.multipleScores[question.multipleScores.length - 1]);
+                }
+            }
+            if (question.scores) {
+                teamScore += parseFloat(question.scores[teamName]);
+            }
+        });
+        teamScore = isNaN(teamScore) ? 0 : teamScore;
+        return teamScore + " / " + totalScore;
+    };
+
+    render() {
+        const { round } = this.state;
+        const { name, teamName } = this.props.match.params;
         return (
             <div>
-                <Link to={'/participant/Example'}>
+                <Link to={'/participant/' + name}>
                     <button>Home screen (for next round)</button>
                 </Link>
-                <Link to={'/participant/Example/' + round.name + '/results'}>
+                <Link to={'/participant/' + name + '/' + round.name + '/results'}>
                     <button>See how everyone else did</button>
                 </Link>
-                <h1>{round && round.name}. Results for {teamName}</h1>
+                <h1>{round && round.name}. Results for {teamName}: {this.renderTeamScore()}</h1>
                 {round && round.questions && round.questions.map((q, i) => this.displayQuestion(q,i))}
                 <Scoreboard />
-                <Link to={'/participant/Example'}>
+                <Link to={'/participant/' + name}>
                     <button>Home screen (for next round)</button>
                 </Link>
-                <Link to={'/participant/Example/' + round.name + '/results'}>
+                <Link to={'/participant/' + name + '/' + round.name + '/results'}>
                     <button>See how everyone else did</button>
                 </Link>
             </div>

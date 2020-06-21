@@ -1,6 +1,6 @@
 import React from 'react';
 import firebase from 'firebase';
-import { Select } from 'antd';
+import {Alert, Select} from 'antd';
 import {
     Link,
     useParams,
@@ -162,15 +162,23 @@ class RoundTaker extends React.Component {
     };
 
     render() {
-        const { round } = this.state;
-        console.log(round);
+        const { round, selectedTeam } = this.state;
+        const { name } = this.props.match.params;
         this.userInputRefs = [];
         return (
             <div>
+                <Link to={'/participant/' + name}>
+                    <button>Home screen</button>
+                </Link>
+                <br/>
                 Select your team: {this.selectTeam()}
+                {!selectedTeam && <Alert message={"You must select a team before submitting"} type="warning" />}
                 <h1>Round name here: {round && round.name}</h1>
                 {round && round.questions && round.questions.map((q, i) => this.displayQuestion(q,i,round.customScoringEnabled))}
-                <button onClick={this.submitRound}>Submit all answers for this round</button>
+                {!selectedTeam && <Alert message={"You must select a team before submitting"} type="warning" />}
+                {selectedTeam && <Link to={'/participant/' + name + '/' + round.name + '/results/' + selectedTeam} >
+                    <button onClick={this.submitRound}>Submit all answers for this round</button>
+                </Link>}
             </div>
         );
     }

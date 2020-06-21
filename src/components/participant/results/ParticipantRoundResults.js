@@ -1,5 +1,5 @@
 import React from 'react';
-import {withRouter} from "react-router-dom";
+import {Link, withRouter} from "react-router-dom";
 import RoundResults from "../../results/RoundResults";
 
 const columns = [
@@ -17,7 +17,14 @@ const columns = [
 
 class ParticipantRoundResults extends React.Component {
     render() {
-        return <RoundResults columns={columns}/>
+        const { name } = this.props.match.params;
+        return <div>
+            <Link to={'/participant/' + name}>
+                <button>Home screen</button>
+            </Link>
+            <br/>
+            <RoundResults columns={columns}/>
+        </div>
     }
 }
 
