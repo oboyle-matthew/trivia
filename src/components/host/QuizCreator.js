@@ -167,7 +167,8 @@ class QuizCreator extends React.Component {
     };
 
     viewResults = (roundName) => {
-        return <Link to={`${roundName}/results`}>
+        const { name } = this.props.match.params;
+        return <Link to={`/participant/${name}/${roundName}/results`}>
             <button>View Results</button>
         </Link>
     };
