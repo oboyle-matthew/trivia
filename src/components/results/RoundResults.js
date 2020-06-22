@@ -74,14 +74,19 @@ class RoundResults extends React.Component {
             }
             return 'Testing';
         }
-
-    }
+        if (question.questionType === 'multiple_answers') {
+            return question.multipleScores.map((score, i) => {
+                return <div>{`${i+1} correct: ${score} point(s)`}</div>
+            });
+        }
+    };
 
     renderScores = (question, questionIndex) => {
         const { columns } = this.props;
         const { scores } = question;
         const data = scores && Object.keys(scores).map((teamName, i) => {
             const other = this.renderOtherInfo(question, teamName);
+            console.log(other);
             return {
                 teamName: teamName,
                 teamAnswer: question.userAnswer && question.userAnswer[teamName],

@@ -8,11 +8,20 @@ class HostRoundResults extends React.Component {
 
     changePoints = (e, record) => {
         const { name, round } = this.props.match.params;
-        console.log(name);
         this.scoreRef = firebase.database().ref('quizzes').child(name).child('rounds').child(round).child('questions').child(record.questionIndex).child('scores').child(record.teamName);
-        console.log(e.target.value);
         const score = e.target.value;
         this.scoreRef.set(score);
+    };
+
+    renderAnswers = (text, record) => {
+        const { questionType } = record;
+        if (questionType === 'multiple_answers') {
+            return <div>
+                {record.teamAnswer.map(a => <div>{a}</div>)}
+            </div>
+        } else {
+            return text;
+        }
     };
 
     getColumns = () => {
@@ -26,6 +35,7 @@ class HostRoundResults extends React.Component {
                 title: 'Team Answer',
                 dataIndex: 'teamAnswer',
                 key: 'teamAnswer',
+                render: this.renderAnswers,
             },
             {
                 title: 'Other',

@@ -7,6 +7,7 @@ import {
     withRouter,
 } from "react-router-dom";
 import {getSortedRoundNames} from "../../helpers/RoundNameSorter";
+import Scoreboard from "../results/Scoreboard";
 
 class QuizTaker extends React.Component {
     constructor(props) {
@@ -33,15 +34,14 @@ class QuizTaker extends React.Component {
         return (
             <div>
                 <h1>Quiz name here: {quiz && quiz.name}</h1>
-                <Collapse defaultActiveKey={'0'}>
-                    {rounds && getSortedRoundNames(rounds).map((roundName, i) => {
-                        const round = rounds[roundName];
-                        return <div style={{display: 'flex', flexDirection: 'row'}}>
-                            <p>{roundName}</p>
-                            {round.show && <Link to={'/participant/' + quiz.name + '/' + round.name}>View</Link>}
-                        </div>
-                    })}
-                </Collapse>
+                {rounds && getSortedRoundNames(rounds).map((roundName, i) => {
+                    const round = rounds[roundName];
+                    return <div style={{display: 'flex', flexDirection: 'row'}}>
+                        <p>{roundName}</p>
+                        {round.show && <Link to={'/participant/' + quiz.name + '/' + round.name}>View</Link>}
+                    </div>
+                })}
+                <Scoreboard/>
             </div>
         );
     }

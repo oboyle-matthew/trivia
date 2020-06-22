@@ -19,8 +19,6 @@ export function submitAnswer(answers, name, round, roundRef, teamName, customSco
                     }
                 }
             }
-            console.log(question.multipleScores);
-            console.log(question.customScores);
 
             const points = gradeQuestion(question, answers[i].answer, questionRef, teamName, score);
             if (question.userAnswer === undefined) {

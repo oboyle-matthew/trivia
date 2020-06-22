@@ -19,7 +19,6 @@ const renderAnswers = (record) => {
     if (questionType === 'number' || questionType === 'closest') {
         return <div>
             {record.numberAnswer}
-            {record.margin && (' +- ' + record.margin)}
         </div>
     }
     if (questionType === 'multiple_answers') {
