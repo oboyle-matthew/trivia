@@ -86,7 +86,6 @@ class RoundResults extends React.Component {
         const { scores } = question;
         const data = scores && Object.keys(scores).map((teamName, i) => {
             const other = this.renderOtherInfo(question, teamName);
-            console.log(other);
             return {
                 teamName: teamName,
                 teamAnswer: question.userAnswer && question.userAnswer[teamName],
@@ -111,7 +110,7 @@ class RoundResults extends React.Component {
         const { round } = this.state;
         return (
             <div>
-                <h1>Round name here: {round && round.name}</h1>
+                <h1>{round && round.name}</h1>
                 {round && round.questions && round.questions.map((q, i) => this.displayQuestion(q,i))}
                 <Scoreboard />
             </div>

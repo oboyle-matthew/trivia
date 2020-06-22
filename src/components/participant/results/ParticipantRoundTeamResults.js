@@ -90,7 +90,6 @@ class ParticipantRoundTeamResults extends React.Component {
         let teamScore = 0;
         round.questions && round.questions.forEach(question => {
             const { questionType } = question;
-            console.log(round.customScoringEnabled && round.customScores)
             if (round.customScoringEnabled && round.customScores) {
                 // Could do this outside loop, but this works
                 totalScore = parseFloat(round.customScores[0]) + (parseFloat(round.customScores[1])*2) + (parseFloat(round.customScores[2])*3)

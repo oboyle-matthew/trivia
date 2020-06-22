@@ -32,7 +32,6 @@ class Scoreboard extends React.Component {
 
     componentDidMount() {
         const { name } = this.props.match.params;
-        console.log(name);
         const self = this;
         this.quizRef = firebase.database().ref('quizzes').child(name);
         this.quizRef.on('value', snapshot => {

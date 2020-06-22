@@ -53,6 +53,13 @@ class QuizCreator extends React.Component {
         this.quizRef.set(quiz);
     };
 
+    removeTeam = (teamName) => {
+        //TODO: Should prob remove all their results to avoid errors, but that won't really happen in real uses
+        const { quiz } = this.state;
+        delete quiz.teams[teamName];
+        this.quizRef.set(quiz);
+    };
+
     renderTeams = () => {
         const { quiz } = this.state;
         const teams = quiz.teams;
@@ -62,6 +69,7 @@ class QuizCreator extends React.Component {
                 {Object.keys(teams).map(teamName => {
                     return <div>
                         {teamName}
+                        <button onClick={() => this.removeTeam(teamName)}>X</button>
                     </div>
                 })}
             </div>
@@ -158,12 +166,33 @@ class QuizCreator extends React.Component {
         </div>
     };
 
+    viewResults = (roundName) => {
+        return <Link to={`${roundName}/results`}>
+            <button>View Results</button>
+        </Link>
+    };
+
+    viewParticipantView = (roundName) => {
+        const { name } = this.props.match.params;
+        return <Link to={`/participant/${name}/${roundName}`}>
+            <button>Take this round</button>
+        </Link>
+    };
+
+    extra = (roundName) => {
+        return <div style={{display: 'flex', flexDirection: 'row'}}>
+            {this.viewParticipantView(roundName)}
+            {this.viewResults(roundName)}
+            {this.deletePanel(roundName)}
+        </div>
+    };
+
     render() {
         const { quiz, newRoundNames } = this.state;
         const rounds = quiz.rounds;
         return (
             <div>
-                <h1>Quiz name here: {quiz && quiz.name}</h1>
+                <h1>{quiz && quiz.name}</h1>
                 <Link to={'/register/' + quiz.name}>
                     <button>Register a new team</button>
                 </Link>
@@ -171,7 +200,7 @@ class QuizCreator extends React.Component {
                 <Collapse>
                     {rounds && getSortedRoundNames(rounds).map((roundName, i) => {
                         const round = rounds[roundName];
-                        return <Panel header={this.renderPanel(roundName)} key={i} extra={this.deletePanel(roundName)}>
+                        return <Panel header={this.renderPanel(roundName)} key={i} extra={this.extra(roundName)}>
                             <RoundCreator round={round} roundRef={this.quizRef.child('rounds').child(roundName)} />
                         </Panel>
                     })}

@@ -13,6 +13,7 @@ import SpeedClues from "./speed_clues/SpeedClues";
 import {submitAnswer, submitSpeedAnswer} from "../../helpers/AnswerPoster";
 import MultipleAnswersInput from "./user_input/MultipleAnswersInput";
 import ImageDisplay from "../media_display/ImageDisplay";
+import {ResizableBox} from "react-resizable";
 
 const { Option } = Select;
 
@@ -112,11 +113,14 @@ class RoundTaker extends React.Component {
         if (question.questionType === 'speed' && !question.begin) {
             return;
         }
-        return <div style={{border: '2px solid black'}}>
-            <div style={{display: 'flex', flexDirection: 'row'}}>
-                <h4>Q{i+1}: {question.question} (type={question.questionType})</h4>
-                {question.imageId && <ImageDisplay width={300} height={200} imageId={question.imageId}/>}
-                {customScoringEnabled && this.selectCustomScore(i)}
+        return <div style={{border: '2px solid black', width: question.imageId ? "" : "100%"}}>
+            {/*If the question doesn't have media, it should take up the whole row*/}
+            <div>
+                <div style={{display: 'flex', flexDirection: 'row'}}>
+                    <h4>Q{i+1}: {question.question} (type={question.questionType})</h4>
+                    {customScoringEnabled && this.selectCustomScore(i)}
+                </div>
+                {question.imageId && <ImageDisplay width={600} height={300} imageId={question.imageId}/>}
             </div>
             {this.userInput(question, i)}
         </div>
@@ -180,8 +184,10 @@ class RoundTaker extends React.Component {
                 <br/>
                 Select your team: {this.selectTeam()}
                 {!selectedTeam && <Alert message={"You must select a team before submitting"} type="warning" />}
-                <h1>Round name here: {round && round.name}</h1>
-                {round && round.questions && round.questions.map((q, i) => this.displayQuestion(q,i,round.customScoringEnabled))}
+                <h1>{round && round.name}</h1>
+                <div style={{display: 'flex', flexWrap: 'wrap'}}>
+                    {round && round.questions && round.questions.map((q, i) => this.displayQuestion(q,i,round.customScoringEnabled))}
+                </div>
                 {!selectedTeam && <Alert message={"You must select a team before submitting"} type="warning" />}
                 {selectedTeam && <Link to={'/participant/' + name + '/' + round.name + '/results/' + selectedTeam} >
                     <button onClick={this.submitRound}>Submit all answers for this round</button>

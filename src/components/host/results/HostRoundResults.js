@@ -2,7 +2,7 @@ import React from 'react';
 import firebase from 'firebase';
 import {withRouter} from "react-router-dom";
 import RoundResults from "../../results/RoundResults";
-import { Input } from 'antd';
+import { Input, Popconfirm } from 'antd';
 
 class HostRoundResults extends React.Component {
 
@@ -58,8 +58,38 @@ class HostRoundResults extends React.Component {
         ];
     };
 
+    clearAllScores = () => {
+        const { name, round } = this.props.match.params;
+        firebase.database().ref('quizzes').child(name).child('rounds').child(round).child('questions').once('value').then(data => {
+            const questions = data.val();
+            questions.forEach(question => {
+                question.guesses = null;
+                question.scores = null;
+                question.userAnswer = null;
+            });
+            console.log(questions);
+            data.ref.set(questions);
+        });
+        // console.log(questionsRef);
+    };
+
+    renderClearButton = () => {
+        return <Popconfirm
+            placement="topRight"
+            title="Are you sure clear all results for this round? Questions will remain, but all user answers/score will be deleted (used for removing test results)"
+            onConfirm={this.clearAllScores}
+            okText="Yes"
+            cancelText="No"
+        >
+            <button onClick={e => e.stopPropagation()}>Clear all scores for this round</button>
+        </Popconfirm>
+    };
+
     render() {
-        return <RoundResults columns={this.getColumns()}/>
+        return <div>
+            {this.renderClearButton()}
+            <RoundResults columns={this.getColumns()}/>
+        </div>
     }
 }
 

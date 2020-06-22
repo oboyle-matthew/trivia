@@ -299,6 +299,12 @@ export default class RoundCreator extends React.Component {
         roundRef.set(round);
     };
 
+    toggleFinishedRound = (e, round) => {
+        const { roundRef } = this.props;
+        round.finished = e;
+        roundRef.set(round);
+    };
+
     setCustomScoring = (val) => {
         const { round, roundRef } = this.props;
         round.customScoringEnabled = val;
@@ -320,7 +326,7 @@ export default class RoundCreator extends React.Component {
     renderCustomScoring = () => {
         const { round } = this.props;
         const { customScoringEnabled, customScores } = round;
-        return <div>
+        return <div style={{marginTop: 20, marginBottom: 20}}>
             <button onClick={() => this.setCustomScoring(!customScoringEnabled)}>{customScoringEnabled ? "Disable " : "Enable "} custom scoring</button>
             (Overrides all basic scores)
             {customScoringEnabled && customScores && <div>
@@ -359,8 +365,13 @@ export default class RoundCreator extends React.Component {
         return (
             <div>
                 <div>
-                    <div>
-                        Show round: <Switch checked={round.show} onChange={e => this.toggleShowRound(e,round)} />
+                    <div style={{display: 'flex', flexDirection: 'row'}}>
+                        <div>
+                            Show round: <Switch checked={round.show} onChange={e => this.toggleShowRound(e,round)} />
+                        </div>
+                        <div style={{marginLeft: 30}}>
+                            Show results: <Switch checked={round.finished} onChange={e => this.toggleFinishedRound(e,round)} />
+                        </div>
                     </div>
                     {this.renderCustomScoring()}
                     {this.renderDescription()}

@@ -79,17 +79,7 @@ function gradeQuestion(question, answer, questionRef, teamName, score) {
                     }
                 }
             });
-            // answer.forEach((a, i) => {
-            //     for (let j = 0; j < question.multipleAnswers.length; j++) {
-            //         if (gradeTextQuestion(question.multipleAnswers[j],a)) {
-            //             numCorrect++;
-            //             break;
-            //         }
-            //     }
-            // });
             if (numCorrect > 0) {
-                console.log(numCorrect);
-                console.log(question.customScores);
                 if (question.customScores) {
                     return question.customScores[numCorrect-1]
                 } else {
@@ -112,7 +102,6 @@ function gradeTextQuestion(question, answer) {
         } catch(err) {
 
         }
-        console.log()
         let possibleAnswer = possibleAnswers[i];
         try {
             possibleAnswer = possibleAnswers[i].toLowerCase();
@@ -144,27 +133,68 @@ function gradeMultipleChoiceQuestion(question, answer) {
     return question.correctChoice === answer;
 }
 
-function gradeClosestQuestion(question, answer, questionRef, teamName) {
-    let { guesses, numberAnswer, positionScoring } = question;
-    if (guesses === undefined) {
-        guesses = [];
-    }
-    // Removing duplicate guesses by same team
-    let teamGuessIndex = -1;
+function updateScoring(guesses, positionScoring) {
+    const scoring = {};
     guesses.forEach((guess, i) => {
-        if (guess.teamName === teamName) {
-            teamGuessIndex = i
+        const { num, teamName } = guess;
+        if (i > 0 && parseFloat(guesses[i-1].num) === parseFloat(num)) {
+            // 2 people have the same guess
+            scoring[teamName] = scoring[guesses[i-1].teamName];
+        }
+        else if (Object.keys(scoring).indexOf(teamName) === -1) {
+            if (i < positionScoring.length) {
+                scoring[teamName] = parseFloat(positionScoring[i])
+            } else {
+                scoring[teamName] = 0;
+            }
         }
     });
-    if (teamGuessIndex >= 0) {
-        guesses.splice(teamGuessIndex, 1);
+    return scoring;
+}
+
+function gradeClosestQuestion(question, answer, questionRef, teamName) {
+    let { userAnswer, numberAnswer, positionScoring } = question;
+    if (userAnswer === undefined) {
+        userAnswer = {};
     }
-    guesses.push({num: parseFloat(answer), teamName: teamName});
-    guesses.sort((a, b) => sortByGuessDistance(a.num, b.num, numberAnswer));
-    question.guesses = guesses;
-    question.scores = updateScoring(guesses, positionScoring);
+    userAnswer[teamName] = answer;
+    const closenessOrder = getClosenessOrder(userAnswer, numberAnswer);
+    const scoring = {};
+    closenessOrder.forEach((team, i) => {
+        if (i > 0 && parseFloat(userAnswer[closenessOrder[i-1]]) === parseFloat(userAnswer[team])) {
+            scoring[team] = scoring[closenessOrder[i-1]];
+        } else {
+            if (i < positionScoring.length) {
+                scoring[team] = parseFloat(positionScoring[i]);
+            } else {
+                scoring[team] = 0;
+            }
+        }
+    });
+    question.userAnswer = userAnswer;
+    question.scores = scoring;
     questionRef.set(question);
     return question.scores[teamName];
+
+    // if (guesses === undefined) {
+    //     guesses = [];
+    // }
+    // // Removing duplicate guesses by same team
+    // let teamGuessIndex = -1;
+    // guesses.forEach((guess, i) => {
+    //     if (guess.teamName === teamName) {
+    //         teamGuessIndex = i
+    //     }
+    // });
+    // if (teamGuessIndex >= 0) {
+    //     guesses.splice(teamGuessIndex, 1);
+    // }
+    // guesses.push({num: parseFloat(answer), teamName: teamName});
+    // guesses.sort((a, b) => sortByGuessDistance(a.num, b.num, numberAnswer));
+    // question.guesses = guesses;
+    // question.scores = updateScoring(guesses, positionScoring);
+    // questionRef.set(question);
+    // return question.scores[teamName];
 }
 
 function gradeSpeedQuestion(question, answer, questionRef, teamName) {
@@ -204,23 +234,10 @@ function gradeSpeedQuestion(question, answer, questionRef, teamName) {
     }
 }
 
-function updateScoring(guesses, positionScoring) {
-    const scoring = {};
-    guesses.forEach((guess, i) => {
-        const { num, teamName } = guess;
-        if (i > 0 && parseFloat(guesses[i-1].num) === parseFloat(num)) {
-            // 2 people have the same guess
-            scoring[teamName] = scoring[guesses[i-1].teamName];
-        }
-        else if (Object.keys(scoring).indexOf(teamName) === -1) {
-            if (i < positionScoring.length) {
-                scoring[teamName] = parseFloat(positionScoring[i])
-            } else {
-                scoring[teamName] = 0;
-            }
-        }
-    });
-    return scoring;
+function getClosenessOrder(userAnswers, numberAnswer) {
+    return Object.keys(userAnswers).sort((a,b) => {
+        return Math.abs(parseFloat(userAnswers[a]) - parseFloat(numberAnswer)) - Math.abs(parseFloat(userAnswers[b]) - parseFloat(numberAnswer));
+    })
 }
 
 function sortByGuessDistance(a,b,numberAnswer) {

@@ -65,7 +65,7 @@ class QuizTaker extends React.Component {
         const { quiz, teamName, teamMembers, newTeamMember } = this.state;
         return (
             <div>
-                <h1>Quiz name here: {quiz && quiz.name}</h1>
+                <h1>{quiz && quiz.name}</h1>
                 Team name: <Input value={teamName} onChange={this.updateTeamName} />
                 {teamMembers.map(member => <div>{member}</div>)}
                 Add Team Member: <Input onPressEnter={this.addTeamMember} value={newTeamMember} onChange={this.updateNewTeamMember} />

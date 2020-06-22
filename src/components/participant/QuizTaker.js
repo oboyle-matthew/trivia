@@ -33,12 +33,17 @@ class QuizTaker extends React.Component {
         const rounds = quiz.rounds;
         return (
             <div>
-                <h1>Quiz name here: {quiz && quiz.name}</h1>
+                <h1>{quiz && quiz.name}</h1>
                 {rounds && getSortedRoundNames(rounds).map((roundName, i) => {
                     const round = rounds[roundName];
                     return <div style={{display: 'flex', flexDirection: 'row'}}>
                         <p>{roundName}</p>
-                        {round.show && <Link to={'/participant/' + quiz.name + '/' + round.name}>View</Link>}
+                        <div style={{marginLeft: 10, marginRight: 30}}>
+                            {round.show && <Link to={`/participant/${quiz.name}/${round.name}`}>Take round</Link>}
+                        </div>
+                        <div>
+                            {round.finished && <Link to={`/participant/${quiz.name}/${round.name}/results`}>View results</Link>}
+                        </div>
                     </div>
                 })}
                 <Scoreboard/>

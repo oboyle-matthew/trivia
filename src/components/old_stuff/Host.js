@@ -71,8 +71,6 @@ export default class Host extends React.Component {
 
     handleImageAsFile = (e) => {
         const image = e.target.files[0];
-        console.log(image);
-        console.log(image.name);
         this.setState({
             image: image,
         });
