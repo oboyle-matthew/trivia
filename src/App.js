@@ -2,6 +2,7 @@ import React from 'react';
 import HomePage from "./components/HomePage";
 import app from 'firebase/app';
 import 'antd/dist/antd.css'
+import './App.css';
 
 var config = {
     apiKey: "AIzaSyBfCWC3nO4Dm6t_Mdi023zABHHKzrOdQkI",
