@@ -37,7 +37,7 @@ export default class ParticipantHomePage extends React.Component {
                     <div className='quiz-container'>
 
                         {Object.keys(quizzes).map((quizName, i) => {
-                            return <div style={{margin: 20}}>
+                            return <div style={{margin: 30}}>
                                     {this.displayQuiz(quizzes[quizName], i)}
                             </div>
                         })}
