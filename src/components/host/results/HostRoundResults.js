@@ -16,9 +16,13 @@ class HostRoundResults extends React.Component {
     renderAnswers = (text, record) => {
         const { questionType } = record;
         if (questionType === 'multiple_answers') {
-            return <div>
-                {record.teamAnswer.map(a => <div>{a}</div>)}
-            </div>
+            if (Array.isArray(record.teamAnswer)) {
+                return <div>
+                    {record.teamAnswer.map(a => <div>{a}</div>)}
+                </div>
+            } else {
+                return text;
+            }
         } else {
             return text;
         }
