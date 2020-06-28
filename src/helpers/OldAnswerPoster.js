@@ -21,21 +21,32 @@ export function submitAnswer(answers, name, round, roundRef, teamName, customSco
             }
 
             const points = gradeQuestion(question, answers[i].answer, questionRef, teamName, score);
-            let userAnswer = answers[i].answer;
-            if (round.customScoringEnabled && customScores[i]) {
-                userAnswer += (' (for ' + customScores[i] + "point(s))");
+            if (question.userAnswer === undefined) {
+                question.userAnswer = {};
             }
+            question.userAnswer[teamName] = answers[i].answer;
+            if (round.customScoringEnabled && customScores[i]) {
+                question.userAnswer[teamName] += (' (for ' + customScores[i] + "point(s))");
+            }
+            delete question.customScores;
             if (question.questionType !== 'closest') {
-                updateDatabase(question, questionRef, points, teamName, userAnswer);
+                addScoreToDatabase(question, questionRef, points, teamName);
             }
             console.log("Question " + (i+1) + ": " + points + " points");
         }
     });
 }
 
-function updateDatabase(question, questionRef, points, teamName, userAnswer) {
-    questionRef.child('userAnswer').update({[teamName]: userAnswer});
-    questionRef.child('scores').update({[teamName]: points})
+function addScoreToDatabase(question, questionRef, points, teamName) {
+    let { scores } = question;
+    if (scores === undefined) {
+        scores = {};
+    }
+    scores[teamName] = points;
+    question.scores = scores;
+    questionRef.child('userAnswer').update({[teamName]: points});
+    questionRef.child('scores').update({[teamName]: points});
+    // questionRef.set(question);
 }
 
 function gradeQuestion(question, answer, questionRef, teamName, score) {
@@ -124,28 +135,48 @@ function gradeMultipleChoiceQuestion(question, answer) {
     return question.correctChoice === answer;
 }
 
-function gradeClosestQuestion(question, userAnswer, questionRef, teamName) {
-    let { numberAnswer, positionScoring } = question;
-    questionRef.child('userAnswer').update({[teamName]: userAnswer}).then(() => {
-        // This avoids the case where 2 people submit at the same time, and so they don't know about each-other
-        questionRef.child('userAnswer').once('value').then(data => {
-            const userAnswers = data.val();
-            const closenessOrder = getClosenessOrder(userAnswers, numberAnswer);
-            const scoring = {};
-            closenessOrder.forEach((team, i) => {
-                if (i > 0 && parseFloat(userAnswers[closenessOrder[i-1]]) === parseFloat(userAnswers[team])) {
-                    scoring[team] = scoring[closenessOrder[i-1]];
-                } else {
-                    if (i < positionScoring.length) {
-                        scoring[team] = parseFloat(positionScoring[i]);
-                    } else {
-                        scoring[team] = 0;
-                    }
-                }
-            });
-            questionRef.child('scores').set(scoring);
-        });
+function updateScoring(guesses, positionScoring) {
+    const scoring = {};
+    guesses.forEach((guess, i) => {
+        const { num, teamName } = guess;
+        if (i > 0 && parseFloat(guesses[i-1].num) === parseFloat(num)) {
+            // 2 people have the same guess
+            scoring[teamName] = scoring[guesses[i-1].teamName];
+        }
+        else if (Object.keys(scoring).indexOf(teamName) === -1) {
+            if (i < positionScoring.length) {
+                scoring[teamName] = parseFloat(positionScoring[i])
+            } else {
+                scoring[teamName] = 0;
+            }
+        }
     });
+    return scoring;
+}
+
+function gradeClosestQuestion(question, answer, questionRef, teamName) {
+    let { userAnswer, numberAnswer, positionScoring } = question;
+    if (userAnswer === undefined) {
+        userAnswer = {};
+    }
+    userAnswer[teamName] = answer;
+    const closenessOrder = getClosenessOrder(userAnswer, numberAnswer);
+    const scoring = {};
+    closenessOrder.forEach((team, i) => {
+        if (i > 0 && parseFloat(userAnswer[closenessOrder[i-1]]) === parseFloat(userAnswer[team])) {
+            scoring[team] = scoring[closenessOrder[i-1]];
+        } else {
+            if (i < positionScoring.length) {
+                scoring[team] = parseFloat(positionScoring[i]);
+            } else {
+                scoring[team] = 0;
+            }
+        }
+    });
+    question.userAnswer = userAnswer;
+    question.scores = scoring;
+    questionRef.set(question);
+    return question.scores[teamName];
 }
 
 function gradeSpeedQuestion(question, answer, questionRef, teamName) {
@@ -189,4 +220,8 @@ function getClosenessOrder(userAnswers, numberAnswer) {
     return Object.keys(userAnswers).sort((a,b) => {
         return Math.abs(parseFloat(userAnswers[a]) - parseFloat(numberAnswer)) - Math.abs(parseFloat(userAnswers[b]) - parseFloat(numberAnswer));
     })
+}
+
+function sortByGuessDistance(a,b,numberAnswer) {
+    return Math.abs(parseFloat(a) - parseFloat(numberAnswer)) - Math.abs(parseFloat(b) - parseFloat(numberAnswer))
 }

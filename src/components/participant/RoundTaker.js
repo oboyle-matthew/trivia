@@ -36,10 +36,14 @@ class RoundTaker extends React.Component {
         this.roundRef = firebase.database().ref('quizzes').child(name).child('rounds').child(round);
         this.roundRef.on('value', snapshot => {
             const round = snapshot.val();
+            let { customScores } = self.state;
+            if (customScores.length !== round.questions.length) {
+                customScores = round.questions.map(() => undefined)
+            }
             self.setState({
                 round,
                 userInputRefs: round.questions.map(() => React.createRef()),
-                customScores: round.questions.map(() => undefined),
+                customScores: customScores,
             });
         });
         this.teamRef = firebase.database().ref('quizzes').child(name).child('teams');
