@@ -121,7 +121,13 @@ function gradeNumberQuestion(question, answer) {
 }
 
 function gradeMultipleChoiceQuestion(question, answer) {
-    return question.correctChoice === answer;
+    let correctChoice = question.correctChoice;
+    try {
+        correctChoice = correctChoice.toLowerCase();
+    } catch(err) {
+
+    }
+    return correctChoice === answer;
 }
 
 function gradeClosestQuestion(question, userAnswer, questionRef, teamName) {
