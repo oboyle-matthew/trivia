@@ -71,6 +71,9 @@ class Scoreboard extends React.Component {
                         if (question.scores) {
                             Object.keys(question.scores).forEach(teamName => {
                                 let teamScore = teamScores.filter(elem => elem.teamName === teamName)[0];
+                                if (!teamScore) {
+                                    return;
+                                }
                                 let score;
                                 if (isNaN(question.scores[teamName]) || question.scores[teamName] === '') {
                                     score = 0;

@@ -99,8 +99,19 @@ class RoundResults extends React.Component {
     };
 
     displayQuestion = (question, i) => {
+        let score;
+        try {
+            if (question.score) {
+                score = `(${question.score} point(s))`
+            }
+            if (question.multipleScores && Array.isArray(question.multipleScores) && question.multipleScores.length > 0) {
+                score = `(${question.multipleScores[question.multipleScores.length-1]} point(s))`
+            }
+        } catch(err) {
+            // Trouble parsing score -- Idk why this would happen
+        }
         return <div style={{border: '2px solid black'}}>
-            <h4>Q{i+1}: {question.question} (type={question.questionType})</h4>
+            <h4>Q{i+1}: {question.question} {score}</h4>
             {renderAnswers(question)}
             {this.renderScores(question, i)}
         </div>

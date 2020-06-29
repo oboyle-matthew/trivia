@@ -118,11 +118,23 @@ class RoundTaker extends React.Component {
         if (question.questionType === 'speed' && !question.begin) {
             return;
         }
+        let score;
+        try {
+            if (question.score) {
+                score = `(${question.score} point(s))`
+            }
+            if (question.multipleScores && Array.isArray(question.multipleScores) && question.multipleScores.length > 0) {
+                score = `(${question.multipleScores[question.multipleScores.length-1]} point(s))`
+            }
+        } catch(err) {
+            // Trouble parsing score -- Idk why this would happen
+        }
+
         return <div style={{border: '2px solid black', width: question.imageId ? "" : "100%"}}>
             {/*If the question doesn't have media, it should take up the whole row*/}
             <div>
                 <div style={{display: 'flex', flexDirection: 'row'}}>
-                    <h4>Q{i+1}: {question.question} (type={question.questionType})</h4>
+                    <h4>Q{i+1}: {question.question} {score}</h4>
                     {customScoringEnabled && this.selectCustomScore(i)}
                 </div>
                 {question.imageId && <ImageDisplay width={600} height={600} imageId={question.imageId}/>}
