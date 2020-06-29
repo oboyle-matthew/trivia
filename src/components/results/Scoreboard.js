@@ -93,7 +93,7 @@ class Scoreboard extends React.Component {
         }
         const roundColumns = roundNames.map(roundName => {
             return {
-                title: roundName,
+                title: roundName.length > 30 ? roundName.substring(0,30) + '...' : roundName,
                 dataIndex: roundName,
                 key: roundName,
             }
