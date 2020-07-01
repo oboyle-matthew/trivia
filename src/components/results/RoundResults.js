@@ -99,6 +99,11 @@ class RoundResults extends React.Component {
 
     displayQuestion = (question, i) => {
         let score;
+        if (question.questionType === 'speed') {
+            if (!question.userAnswer) {
+                return;
+            }
+        }
         try {
             if (question.score) {
                 score = `(${question.score} point(s))`

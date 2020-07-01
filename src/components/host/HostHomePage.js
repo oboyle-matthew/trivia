@@ -46,8 +46,9 @@ export default class Host extends React.Component {
         return <div style={{display: 'flex', flexDirection: 'row'}}>
             <p>{quiz.name}</p>
             <p>{quiz.date}</p>
+            &nbsp; &nbsp;
             <Link to={'/host/' + quiz.name}>View</Link>
-            {quiz.name !== 'Example quiz' && <button onClick={() => this.removeQuiz(quiz.name)}>X</button>}
+            {/*{quiz.name !== 'Example quiz' && <button onClick={() => this.removeQuiz(quiz.name)}>X</button>}*/}
         </div>
     };
 

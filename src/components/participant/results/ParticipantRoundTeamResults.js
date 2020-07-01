@@ -127,26 +127,30 @@ class ParticipantRoundTeamResults extends React.Component {
         return teamScore + " / " + totalScore;
     };
 
+    renderTopBottomButtons() {
+        const { round } = this.state;
+        const { name } = this.props.match.params;
+        let hasSpeedQuestions = round.questions && round.questions.filter(q => q.questionType === 'speed').length > 0;
+        return <div>
+            <Link to={'/participant/' + name}>
+                <button>Home screen (for next round)</button>
+            </Link>
+            {!hasSpeedQuestions && <Link to={'/participant/' + name + '/' + round.name + '/results'}>
+                <button>See how everyone else did</button>
+            </Link>}
+        </div>
+    }
+
     render() {
         const { round } = this.state;
         const { name, teamName } = this.props.match.params;
         return (
             <div>
-                <Link to={'/participant/' + name}>
-                    <button>Home screen (for next round)</button>
-                </Link>
-                <Link to={'/participant/' + name + '/' + round.name + '/results'}>
-                    <button>See how everyone else did</button>
-                </Link>
+                {this.renderTopBottomButtons()}
                 <h1>{round && round.name}. Results for {teamName}: {this.renderTeamScore()}</h1>
                 {round && round.questions && round.questions.map((q, i) => this.displayQuestion(q,i))}
                 <Scoreboard />
-                <Link to={'/participant/' + name}>
-                    <button>Home screen (for next round)</button>
-                </Link>
-                <Link to={'/participant/' + name + '/' + round.name + '/results'}>
-                    <button>See how everyone else did</button>
-                </Link>
+                {this.renderTopBottomButtons()}
             </div>
         );
     }
