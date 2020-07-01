@@ -76,7 +76,13 @@ class ParticipantRoundTeamResults extends React.Component {
     };
 
     displayQuestion = (question, i) => {
+        const { teamName } = this.props.match.params;
         let score;
+        if (question.questionType === 'speed') {
+            if (!question.userAnswer || !question.userAnswer.hasOwnProperty(teamName)) {
+                return;
+            }
+        }
         try {
             if (question.score) {
                 score = `(${question.score} point(s))`

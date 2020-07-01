@@ -29,7 +29,7 @@ class QuizCreator extends React.Component {
         this.quizRef.on('value', snapshot => {
             const quiz = snapshot.val();
             let newRoundNames = [];
-            if (quiz.rounds) {
+            if (quiz && quiz.rounds) {
                 if (Object.keys(quiz.rounds).length !== newRoundNames.length) {
                     newRoundNames = getSortedRoundNames(quiz.rounds)
                 }

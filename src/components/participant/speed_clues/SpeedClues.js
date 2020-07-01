@@ -26,7 +26,6 @@ export default class SpeedClues extends React.Component {
                     </div>
                 })}
                 <Input value={answer} onChange={this.updateAnswer}/>
-                <button onClick={() => this.props.submit(answer)}>Submit</button>
             </div>
         );
     }
